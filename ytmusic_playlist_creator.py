@@ -241,9 +241,9 @@ def main():
         print(f"   ... and {len(setlist) - 5} more songs")
     
     # Playlist configuration
-    playlist_name = input(f"\n🎵 Playlist name [Concert Playlist 2024]: ").strip()
+    playlist_name = input(f"\n🎵 Playlist name [Concert Playlist]: ").strip()
     if not playlist_name:
-        playlist_name = "Concert Playlist 2024"
+        playlist_name = "Concert Playlist"
     
     description = f"Setlist with {len(setlist)} songs imported from setlist.txt"
     
