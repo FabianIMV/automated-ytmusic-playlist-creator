@@ -1,3 +1,7 @@
+![Python](https://img.shields.io/badge/python-3.7+-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Stars](https://img.shields.io/github/stars/FabianIMV/automated-ytmusic-playlist-creator)
+
 # YouTube Music Playlist Creator
 
 Automate the creation of YouTube Music playlists from concert setlists. Perfect for music lovers who attend multiple concerts and want their setlists ready to go.
