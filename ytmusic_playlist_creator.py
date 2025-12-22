@@ -232,48 +232,85 @@ def create_playlist_from_setlist(setlist, playlist_name, description="", privacy
         # Create playlist
         print(f"🎵 Creating playlist: {playlist_name}")
         print(f"🔓 Privacy: {privacy}")
-        playlist_id = ytmusic.create_playlist(
-            playlist_name, 
-            description,
-            privacy_status=privacy
-        )
+        
+        try:
+            # Try with privacy_status parameter first
+            playlist_id = ytmusic.create_playlist(
+                playlist_name, 
+                description,
+                privacy_status=privacy
+            )
+        except TypeError:
+            # If privacy_status is not supported, try without it
+            print("⚠️ Privacy parameter not supported, creating playlist without privacy setting")
+            playlist_id = ytmusic.create_playlist(playlist_name, description)
+        
         print(f"✅ Playlist created with ID: {playlist_id}")
         
         successful_adds = 0
         failed_songs = []
+        video_ids = []
         
-        # Search and add each song
+        # Search for all songs first
+        print(f"\n🔍 Searching for {len(setlist)} songs...")
         for i, song in enumerate(setlist, 1):
-            print(f"🔍 [{i}/{len(setlist)}] Searching: {song}")
+            print(f"  [{i}/{len(setlist)}] {song}")
             
             try:
-                # Search for the song
-                search_results = ytmusic.search(song, filter="songs", limit=5)
+                # Search without filter to get videoId
+                # (filter="songs" returns incomplete data in some cases)
+                search_results = ytmusic.search(song, limit=5)
                 
                 if search_results:
-                    # Use first result
-                    video_id = search_results[0]['videoId']
-                    song_title = search_results[0].get('title', 'Unknown')
-                    artist = search_results[0].get('artists', [{}])[0].get('name', 'Unknown')
+                    # Find first song result
+                    found = False
+                    for result in search_results:
+                        if result.get('resultType') == 'song':
+                            video_id = result.get('videoId')
+                            
+                            if video_id:
+                                song_title = result.get('title', 'Unknown')
+                                artist_data = result.get('artists', [{}])
+                                artist = artist_data[0].get('name', 'Unknown') if artist_data else 'Unknown'
+                                
+                                video_ids.append(video_id)
+                                print(f"    ✅ Found: {artist} - {song_title}")
+                                successful_adds += 1
+                                found = True
+                                break
                     
-                    # Add to playlist
-                    ytmusic.add_playlist_items(playlist_id, [video_id])
-                    print(f"  ✅ Added: {artist} - {song_title}")
-                    successful_adds += 1
+                    if not found:
+                        print(f"    ❌ No song result found")
+                        failed_songs.append(song)
                 else:
-                    print(f"  ❌ Not found: {song}")
+                    print(f"    ❌ No results")
                     failed_songs.append(song)
                     
             except Exception as e:
-                print(f"  ❌ Error with '{song}': {str(e)}")
+                print(f"    ❌ Error: {str(e)}")
                 failed_songs.append(song)
+        
+        # Now add all songs at once
+        if video_ids:
+            print(f"\n📤 Adding {len(video_ids)} songs to playlist...")
+            try:
+                result = ytmusic.add_playlist_items(playlist_id, video_ids)
+                print(f"✅ Added {len(video_ids)} songs successfully!")
+            except Exception as e:
+                print(f"⚠️ Error adding songs: {str(e)}")
+                print("Trying to add songs one by one...")
+                for i, video_id in enumerate(video_ids, 1):
+                    try:
+                        ytmusic.add_playlist_items(playlist_id, [video_id])
+                    except Exception as e2:
+                        print(f"  ❌ Error adding song {i}: {str(e2)}")
         
         # Summary
         print(f"\n🎉 Playlist '{playlist_name}' created successfully!")
         print(f"✅ Songs added: {successful_adds}/{len(setlist)}")
         
         if failed_songs:
-            print(f"❌ Songs not found:")
+            print(f"❌ Songs not found ({len(failed_songs)}):")
             for song in failed_songs:
                 print(f"   - {song}")
         
