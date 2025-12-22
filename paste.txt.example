@@ -1,0 +1,17 @@
+# IMPORTANTE: Este es un archivo de EJEMPLO
+# NO COMPARTAS ESTE ARCHIVO CON NADIE - Contiene credenciales sensibles
+# Cada usuario debe generar el suyo propio siguiendo los pasos en la documentación
+
+# Instrucciones para obtener tu propio paste.txt:
+# 1. Ve a https://music.youtube.com en Chrome
+# 2. F12 → Network tab
+# 3. Busca una petición POST que contenga "browse?key="
+# 4. Click derecho → Copy → Copy as cURL
+# 5. Pega TODO el contenido aquí
+
+# El comando cURL debe tener la siguiente estructura:
+# curl 'https://music.youtube.com/youtubei/v1/browse?...' \
+#   -H 'authorization: SAPISIDHASH ...' \
+#   -H 'cookie: ...' \
+#   -H 'content-type: application/json' \
+#   --data-raw '{...}'
