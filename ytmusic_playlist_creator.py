@@ -2,11 +2,19 @@
 """
 YouTube Music Playlist Creator
 Automates playlist creation in YouTube Music using ytmusicapi
+Supports both txt files and setlist.fm URLs
 """
 
 import json
 import os
+import re
 from ytmusicapi import YTMusic
+try:
+    import requests
+    from bs4 import BeautifulSoup
+except ImportError:
+    requests = None
+    BeautifulSoup = None
 
 def setup_ytmusic():
     """Setup ytmusicapi with your headers"""
@@ -124,7 +132,87 @@ def extract_headers_from_curl(filename):
         print("💡 Verify the file contains a valid curl command")
         return None
 
-def create_playlist_from_setlist(setlist, playlist_name, description=""):
+def scrape_setlist_from_url(url):
+    """
+    Scrape setlist from setlist.fm URL
+    
+    Args:
+        url (str): setlist.fm URL
+        
+    Returns:
+        tuple: (artist, event_info, setlist) or (None, None, None)
+    """
+    if requests is None or BeautifulSoup is None:
+        print("❌ Missing dependencies for URL scraping")
+        print("💡 Install with: pip3 install requests beautifulsoup4")
+        return None, None, None
+    
+    try:
+        print(f"🌐 Fetching setlist from: {url}")
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
+        }
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.content, 'html.parser')
+        
+        # Get artist name - try multiple selectors
+        artist = "Unknown Artist"
+        
+        # Try meta tag first
+        meta_artist = soup.find('meta', property='og:title')
+        if meta_artist:
+            title_text = meta_artist.get('content', '')
+            # Format: "Artist Setlist at ..."
+            if ' Setlist' in title_text:
+                artist = title_text.split(' Setlist')[0].strip()
+        
+        # Try header
+        if artist == "Unknown Artist":
+            artist_link = soup.find('a', class_='summary url')
+            if artist_link:
+                artist = artist_link.get_text(strip=True)
+        
+        # Try alternative header
+        if artist == "Unknown Artist":
+            artist_elem = soup.find('span', itemprop='name')
+            if artist_elem:
+                artist = artist_elem.get_text(strip=True)
+        
+        # Get event info (venue, city, date)
+        venue = ""
+        venue_elem = soup.find('a', class_='url fn')
+        if venue_elem:
+            venue = venue_elem.get_text(strip=True)
+        
+        date = ""
+        date_elem = soup.find('em', class_='link')
+        if date_elem:
+            date = date_elem.get_text(strip=True)
+        
+        event_info = f"{venue} - {date}" if venue and date else venue or date
+        
+        # Get songs
+        setlist = []
+        song_elements = soup.find_all('a', class_='songLabel')
+        
+        for song_elem in song_elements:
+            song_name = song_elem.get_text(strip=True)
+            if song_name and not song_name.startswith('('):  # Skip annotations
+                setlist.append(f"{artist} - {song_name}")
+        
+        print(f"✅ Found {len(setlist)} songs from {artist}")
+        if event_info:
+            print(f"📍 Event: {event_info}")
+        
+        return artist, event_info, setlist
+        
+    except Exception as e:
+        print(f"❌ Error scraping URL: {str(e)}")
+        return None, None, None
+
+def create_playlist_from_setlist(setlist, playlist_name, description="", privacy="PUBLIC"):
     """
     Create a YouTube Music playlist from a list of songs
     
@@ -132,6 +220,7 @@ def create_playlist_from_setlist(setlist, playlist_name, description=""):
         setlist (list): List of strings with format "Artist - Song"
         playlist_name (str): Name of the playlist
         description (str): Optional description
+        privacy (str): Playlist privacy: "PUBLIC", "PRIVATE", or "UNLISTED"
     """
     try:
         # Initialize YouTube Music
@@ -142,7 +231,12 @@ def create_playlist_from_setlist(setlist, playlist_name, description=""):
         
         # Create playlist
         print(f"🎵 Creating playlist: {playlist_name}")
-        playlist_id = ytmusic.create_playlist(playlist_name, description)
+        print(f"🔓 Privacy: {privacy}")
+        playlist_id = ytmusic.create_playlist(
+            playlist_name, 
+            description,
+            privacy_status=privacy
+        )
         print(f"✅ Playlist created with ID: {playlist_id}")
         
         successful_adds = 0
@@ -225,31 +319,105 @@ def read_setlist_from_file(filename="setlist.txt"):
         return []
 
 def main():
-    """Main function - reads setlist from file"""
+    """Main function - interactive mode"""
     
-    # Read setlist from file
-    setlist = read_setlist_from_file("setlist.txt")
+    print("🎸 YouTube Music Playlist Creator")
+    print("=" * 50)
+    print("1. Create from setlist.fm URL")
+    print("2. Create from txt file")
+    print("=" * 50)
     
-    if not setlist:
+    choice = input("\nChoose option [1/2]: ").strip()
+    
+    setlist = []
+    artist = ""
+    event_info = ""
+    
+    if choice == "1":
+        # URL mode
+        url = input("\n🔗 Enter setlist.fm URL: ").strip()
+        if not url:
+            print("❌ URL required")
+            return
+        
+        artist, event_info, setlist = scrape_setlist_from_url(url)
+        if not setlist:
+            return
+            
+    elif choice == "2":
+        # File mode
+        filename = input("\n📁 Enter filename [setlist.txt]: ").strip()
+        if not filename:
+            filename = "setlist.txt"
+        
+        setlist = read_setlist_from_file(filename)
+        if not setlist:
+            return
+        
+        # Extract artist from first song if possible
+        if setlist and ' - ' in setlist[0]:
+            artist = setlist[0].split(' - ')[0]
+    else:
+        print("❌ Invalid option")
         return
     
     # Show setlist preview
-    print(f"\n📋 Setlist preview:")
+    print(f"\n📋 Setlist preview ({len(setlist)} songs):")
     for i, song in enumerate(setlist[:5], 1):
         print(f"   {i}. {song}")
     if len(setlist) > 5:
         print(f"   ... and {len(setlist) - 5} more songs")
     
     # Playlist configuration
-    playlist_name = input(f"\n🎵 Playlist name [Concert Playlist]: ").strip()
-    if not playlist_name:
-        playlist_name = "Concert Playlist"
+    print(f"\n🎵 Playlist Configuration")
+    print("-" * 50)
     
-    description = f"Setlist with {len(setlist)} songs imported from setlist.txt"
+    default_name = f"{artist} - Concert Setlist" if artist else "Concert Setlist"
+    playlist_name = input(f"Playlist name [{default_name}]: ").strip()
+    if not playlist_name:
+        playlist_name = default_name
+    
+    # Bilingual description with keywords
+    keywords_en = "live concert setlist tour performance rock music playlist"
+    keywords_es = "concierto en vivo setlist gira presentación música rock playlist"
+    
+    description_parts = [
+        f"🎸 {artist} Concert Setlist" if artist else "Concert Setlist",
+        f"📍 {event_info}" if event_info else "",
+        f"🎵 {len(setlist)} songs",
+        "",
+        f"Keywords: {keywords_en}",
+        f"Palabras clave: {keywords_es}",
+    ]
+    
+    default_description = "\n".join([p for p in description_parts if p])
+    
+    print(f"\nDefault description:")
+    print(default_description)
+    print()
+    
+    custom_desc = input("Custom description (leave empty to use default): ").strip()
+    description = custom_desc if custom_desc else default_description
+    
+    # Privacy setting
+    print("\n🔒 Privacy options:")
+    print("1. PUBLIC (anyone can find and view)")
+    print("2. UNLISTED (only people with link can view)")
+    print("3. PRIVATE (only you can view)")
+    
+    privacy_choice = input("Choose privacy [1/2/3]: ").strip()
+    privacy_map = {"1": "PUBLIC", "2": "UNLISTED", "3": "PRIVATE"}
+    privacy = privacy_map.get(privacy_choice, "PUBLIC")
     
     # Confirm before creating
-    confirm = input(f"\n¿Create playlist '{playlist_name}' with {len(setlist)} songs? [y/N]: ").strip().lower()
-    if confirm not in ['y', 'yes']:
+    print(f"\n📝 Summary:")
+    print(f"   Name: {playlist_name}")
+    print(f"   Songs: {len(setlist)}")
+    print(f"   Privacy: {privacy}")
+    print()
+    
+    confirm = input(f"Create playlist? [y/N]: ").strip().lower()
+    if confirm not in ['y', 'yes', 's', 'si', 'sí']:
         print("❌ Operation cancelled")
         return
     
@@ -257,23 +425,77 @@ def main():
     playlist_id = create_playlist_from_setlist(
         setlist, 
         playlist_name, 
-        description
+        description,
+        privacy
     )
     
     if playlist_id:
         print(f"\n🔗 Playlist URL: https://music.youtube.com/playlist?list={playlist_id}")
-        print(f"\n💡 To use again:")
-        print(f"   1. Update setlist.txt with new songs")
-        print(f"   2. Run: python3 ytmusic_playlist_creator.py")
+        print(f"\n💡 To create another playlist, run the script again!")
+
+def quick_create(url_or_file, playlist_name=None, privacy="PUBLIC"):
+    """
+    Quick playlist creation (for advanced users)
+    
+    Args:
+        url_or_file: URL from setlist.fm or path to txt file
+        playlist_name: Optional custom name
+        privacy: "PUBLIC", "UNLISTED", or "PRIVATE"
+    """
+    setlist = []
+    artist = ""
+    event_info = ""
+    
+    # Check if it's a URL
+    if url_or_file.startswith('http'):
+        artist, event_info, setlist = scrape_setlist_from_url(url_or_file)
+    else:
+        setlist = read_setlist_from_file(url_or_file)
+        if setlist and ' - ' in setlist[0]:
+            artist = setlist[0].split(' - ')[0]
+    
+    if not setlist:
+        return None
+    
+    # Generate playlist name if not provided
+    if not playlist_name:
+        playlist_name = f"{artist} - Concert Setlist" if artist else "Concert Setlist"
+    
+    # Generate description
+    keywords_en = "live concert setlist tour performance rock music playlist"
+    keywords_es = "concierto en vivo setlist gira presentación música rock playlist"
+    
+    description_parts = [
+        f"🎸 {artist} Concert Setlist" if artist else "Concert Setlist",
+        f"📍 {event_info}" if event_info else "",
+        f"🎵 {len(setlist)} songs",
+        "",
+        f"Keywords: {keywords_en}",
+        f"Palabras clave: {keywords_es}",
+    ]
+    
+    description = "\n".join([p for p in description_parts if p])
+    
+    # Create playlist
+    return create_playlist_from_setlist(setlist, playlist_name, description, privacy)
 
 if __name__ == "__main__":
-    # Install ytmusicapi if not installed
+    # Install dependencies if not installed
     try:
         import ytmusicapi
     except ImportError:
-        print("Installing ytmusicapi...")
+        print("📦 Installing ytmusicapi...")
         import subprocess
         subprocess.check_call(["python3", "-m", "pip", "install", "ytmusicapi"])
         import ytmusicapi
+    
+    # Check for optional dependencies
+    try:
+        import requests
+        import bs4
+    except ImportError:
+        print("\n💡 For URL scraping, install additional dependencies:")
+        print("   pip3 install requests beautifulsoup4")
+        print()
     
     main()
