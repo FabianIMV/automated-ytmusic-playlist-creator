@@ -1,9 +1,505 @@
-Bogus Operandi - The Hives
-Main Offender - The Hives
-Rigor Mortis Radio - The Hives
-Enough Is Enough - The Hives
-Walk Idiot Walk - The Hives
-Good Samaritan - The Hives
-Hate To Say I Told You So - The Hives
-Paint A Picture - The Hives
-Come On! - The Hives
+El necio - Silvio Rodríguez
+In My Room - The Beach Boys
+Talk Too Much - Wallows
+You Know I'm No Good - Amy Winehouse
+Cotton Candy - Yungblud
+No quiero dormir - Diego Lorenzini
+Wouldn't It Be Nice - The Beach Boys
+Pyramid Song - Radiohead
+No Matter What - Badfinger
+3005 - Childish Gambino
+London Calling - The Clash
+Gold Day - Sparklehorse
+Half Time - Amy Winehouse
+Sirius - Alan Parsons Project
+Canta la vida - Manuel García
+Nude - Radiohead
+Glimpse of Us - Joji
+Eternal Life - Jeff Buckley
+The River - Springsteen
+Alright - Sam Fender
+Live Forever - Oasis
+Johnsburg, Illinois - Tom Waits
+Entre caníbales - Soda Stereo
+Where Are We Now? - David Bowie
+Within You Without You - George Harrison
+What Once Was - Her's
+Miserable - Wallows
+Here Comes the Sun - George Harrison / Beatles
+Fell on Black Days - Chris Cornell
+Sad Eyed Lady of the Lowlands - Bob Dylan
+Conrad - Ben Howard
+Amsterdam - Nothing But Thieves
+I Wonder - Sixto Rodríguez
+Lord Have Mercy - Childish Gambino
+The Ghost of Tom Joad - Springsteen
+What Is Life - George Harrison
+Plegaria a un Labrador - Víctor Jara
+We're Going to Be Friends - The White Stripes
+Come Back to Earth - Mac Miller
+Spit of You - Sam Fender
+Ojalá - Silvio Rodríguez
+Champagne Supernova - Oasis
+A Love Supreme - John Coltrane
+La luna siempre es muy linda - Víctor Jara
+The Promised Land - Bruce Springsteen
+Motion Picture Soundtrack - Radiohead
+Dead Souls - Joy Division
+Tupelo - Nick Cave
+Trying Your Luck - The Strokes
+Te recuerdo Amanda - Víctor Jara
+When It Breaks - Inhaler
+Pink Moon - Nick Drake
+Something - George Harrison
+I Don't Belong - Fontaines D.C.
+I Hate Everything About You - Three Days Grace
+No Surprises - Radiohead
+The Wolves - Ben Howard
+Needle in the Hay - Elliott Smith
+Darkness on the Edge of Town - Springsteen
+Say Yes - Elliott Smith
+Miénteme - Los Bunkers
+Only Love - Ben Howard
+Programs - Mac Miller
+Dolphins - Tim Buckley
+Between the Bars - Elliott Smith
+Time - Alan Parsons Project
+De música ligera - Soda Stereo
+Cause - Sixto Rodríguez
+La jardinera - Violeta Parra
+If I Can Dream - Elvis
+Solsbury Hill - Peter Gabriel
+Quieren dinero - Los Prisioneros
+End of the Affair - Ben Howard
+Alone Together - The Strokes
+Into My Arms - Nick Cave
+True Love Waits - Radiohead
+River Man - Nick Drake
+Corpus Christi Carol - Jeff Buckley
+En la ciudad de la furia - Soda Stereo
+El aparecido - Víctor Jara
+Atmosphere - Joy Division
+Black Hole Sun - Chris Cornell
+Circles - Mac Miller
+The Bends - Radiohead
+The Question - Mac Miller
+Are You Bored Yet? - Wallows
+Tom Traubert's Blues - Tom Waits
+Lilac Wine - Jeff Buckley
+Wah-Wah - George Harrison
+In Dreams - Ben Howard
+Getting Started - Sam Fender
+The Funeral - Yungblud
+Persiana americana - Soda Stereo
+Baby Blue - Badfinger
+My Sweet Lord - George Harrison
+Promise - Ben Howard
+Linger - The Cranberries
+The Ghost of Tom Joad - Bruce Springsteen
+Redemption Song (cover) - Chris Cornell
+I Put a Spell on You - Nina Simone
+Manifiesto - Víctor Jara
+The Queen Is Dead - The Smiths
+Pretty (Ugly Before) - Elliott Smith
+Farewell Angelina - Joan Baez
+Sugar Man - Sixto Rodríguez
+The Night They Drove Old Dixie Down - Joan Baez
+Pitseleh - Elliott Smith
+Nebraska - Springsteen
+Evil Woman - ELO
+Is Everybody Going Crazy? - Nothing But Thieves
+Buen Augurio - Diego Lorenzini
+Some Might Say - Oasis
+Aqui y ahora - Diego Lorenzini
+People Are Strange - The Doors
+Ice Cream Sundae - Inhaler
+Canción para Mañana - Los Bunkers
+La Voz de los 80 - Los Prisioneros
+Sick of Goodbyes - Sparklehorse
+Lucky - Radiohead
+El Baile de los que Sobran - Los Prisioneros
+Piano Fire - Sparklehorse
+Love Is a Losing Game - Amy Winehouse
+Seasons (solo) - Chris Cornell
+Heroes - David Bowie
+Speed Racer - Her's
+Angeles - Elliott Smith
+Once I Was - Tim Buckley
+Sinnerman - Nina Simone
+Love Letter - Nick Cave
+Fascination Street - The Cure
+From the Edge of the Deep Green Sea - The Cure
+Old and Wise - Alan Parsons Project
+Heartbreak Hotel - Elvis
+Play God - Sam Fender
+Wild Is the Wind - David Bowie
+Wish Me Luck - Wallows
+Way Down in the Hole - Tom Waits
+Oasis de sal - Manuel García
+Ziggy Stardust - David Bowie
+Waltz #2 - Elliott Smith
+Lost in the Supermarket - The Clash
+Diamonds and Rust - Joan Baez
+All Day Long - Bad Nerves
+Wise One - John Coltrane
+Is This It - The Strokes
+Politics & Violence - Dominic Fike
+The End - The Doors
+Downtown Train - Tom Waits
+Don't Give Up - Peter Gabriel
+She's Lost Control - Joy Division
+Closing Time - Tom Waits
+Jungleland - Bruce Springsteen
+Lejos - Diego Lorenzini
+Maldito el amor - Los Prisioneros
+Por eso estoy aquí - Los Prisioneros
+Close to Me - The Cure
+Wonderwall - Oasis
+Suspiros - Manuel García
+To Live Is to Fly - Townes Van Zandt
+Eye in the Sky - Alan Parsons Project
+White Riot - The Clash
+Ice Cold Pool - Wallows
+Barefoot Cinderella - Jeff Buckley
+Biko - Peter Gabriel
+Vampire Mouth - Dominic Fike
+Stronger Than Me - Amy Winehouse
+Hard to Believe - Wallows
+A Certain Romance - Arctic Monkeys
+Anarchist - Yungblud
+Rich Folks Hoax - Sixto Rodríguez
+So Real - Jeff Buckley
+Lovesong - The Cure
+Shelter from the Storm - Bob Dylan
+Sweet - Been Stellar
+3 Nights - Dominic Fike
+Gracious - Ben Howard
+No Place to Fall - Townes Van Zandt
+Mr. Blue Sky - ELO
+Excuse Me - Nothing But Thieves
+Creep - Radiohead
+Visions of Johanna - Bob Dylan
+Sound and Vision - David Bowie
+Give Me Love - George Harrison
+Black Flies - Ben Howard
+Love Me Tender - Elvis
+Cheer Up Baby - Inhaler
+Seven Nation Army - The White Stripes
+Disorder - Joy Division
+Skinty Fia - Fontaines D.C.
+Caroline No - The Beach Boys
+Space Oddity - David Bowie
+Hound Dog - Elvis
+Hombre al agua - Soda Stereo
+Recuérdame - Los Bunkers
+Farewell Transmission - Jason Molina
+Last Night I Dreamt That Somebody Loved Me - The Smiths
+Ball and Biscuit - The White Stripes
+Closer - Kings of Leon
+Jailhouse Rock - Elvis
+Isolation - Joy Division
+Volver a los 17 - Violeta Parra
+Charlotte Sometimes - The Cure
+That's All Right - Elvis
+Corazones rojos - Los Prisioneros
+King's Crossing - Elliott Smith
+Don't Look Back in Anger - Oasis
+Boys Don't Cry - The Cure
+Primavera 0 - Cerati
+Oh! You Pretty Things - David Bowie
+Nada nuevo bajo el sol - Los Bunkers
+Rapture - Declan McKenna
+Climb Up on My Music - Sixto Rodríguez
+All In One - Been Stellar
+El hombre extraño - Silvio Rodríguez
+Trouble - Elvis
+Animal - Dominic Fike
+Day After Day - Badfinger
+I Just Wasn't Made for These Times - The Beach Boys
+No Need to Argue - The Cranberries
+Light My Love - Greta Van Fleet
+Atlantic City - Springsteen
+Like a Rolling Stone - Bob Dylan
+Black Eyes Dog - Nick Drake
+Debo partirme en dos - Silvio Rodríguez
+Spanish Bombs - The Clash
+Girl from the North Country - Bob Dylan
+10x Stronger - Dominic Fike
+Pumpkin - Been Stellar
+Crucify Your Mind - Sixto Rodríguez
+Fake Plastic Trees - Radiohead
+Radio - Bad Nerves
+The Mercy Seat - Nick Cave
+Hotel Yorba - The White Stripes
+Mercy Street - Peter Gabriel
+Mazúrquica modérnica - Violeta Parra
+Hypersonic Missiles - Sam Fender
+Roman Holiday - Fontaines D.C.
+All Things Must Pass - George Harrison
+Weekend - Mac Miller
+The Times They Are A-Changin' - Bob Dylan
+I Need You - Nick Cave
+Remember When - Wallows
+Sorry - Nothing But Thieves
+Martha - Tom Waits
+Righteous - Juice WRLD
+A Fond Farewell - Elliott Smith
+Objects in the Mirror - Mac Miller
+Feelings Good - Nina Simone
+This Charming Man - The Smiths
+El Gavilan - Violeta Parra
+Forget It - Sixto Rodríguez
+Pictures of You - The Cure
+Lucid Dreams - Juice WRLD
+Life on Mars? - David Bowie
+The Key to Life on Earth - Declan McKenna
+This Is America - Childish Gambino
+Lioness - Songs: Ohia
+Brasil - Declan McKenna
+Don't Worry Baby - The Beach Boys
+Seventeen Going Under - Sam Fender
+Jersey Girl - Tom Waits
+Nineteen Hundred and Eighty Five - Wings/Paul McCartney (George Harrison solo)
+Forever Young - Bob Dylan
+Rehab - Amy Winehouse
+Rock the Casbah - The Clash
+There Is a Light That Never Goes Out - The Smiths
+I Bet You Look Good on the Dancefloor - Arctic Monkeys
+Joe Hill - Joan Baez
+Los años - Manuel García
+Some Unholy War - Amy Winehouse
+I'm on Fire - Bruce Springsteen
+Isombard - Declan McKenna
+Pain - Three Days Grace
+Boulevard of Broken Dreams - Green Day
+Nebraska - Bruce Springsteen
+Turn! Turn! Turn! - The Byrds
+Heat Above - Greta Van Fleet
+Back to Black - Amy Winehouse
+Eight Miles High - The Byrds
+Happy Man - Sparklehorse
+Tangled Up in Blue - Bob Dylan
+Sanctuary - Joji
+Loner - Yungblud
+We Are Sudamerican Rockers - Los Prisioneros
+So Cold - Breaking Benjamin
+Last Goodbye - Jeff Buckley
+Darkness on the Edge of Town - Bruce Springsteen
+Paloma nortina - Manuel García
+La maza - Silvio Rodríguez
+When the Curtain Falls - Greta Van Fleet
+High and Dry - Radiohead
+Hold On Magnolia - Jason Molina
+Blowin' in the Wind - Bob Dylan
+Tecumseh Valley - Townes Van Zandt
+Run Run se fue pal Norte - Violeta Parra
+Half the World Away - Oasis
+Lago en el cielo - Cerati
+Nobody Knows You When You're Down and Out - Robert Johnson
+Gracias a la Vida - Violeta Parra
+Particles - Nothing But Thieves
+Should I Stay or Should I Go - The Clash
+Starburster - Fontaines D.C.
+Good News - Mac Miller
+Diary of Jane - Breaking Benjamin
+Grace - Jeff Buckley
+Crimen - Cerati
+Ballad of Big Nothing - Elliott Smith
+This Is How We Walk on the Moon - Arthur Russell
+Lover, You Should've Come Over - Jeff Buckley
+Casamiento de negros - Violeta Parra
+A Hero's Death - Fontaines D.C.
+Hold On - Tom Waits
+Waltz #2 (XO) - Elliott Smith
+Self Care - Mac Miller
+God Only Knows - The Beach Boys
+Miss Misery - Elliott Smith
+Harvey - Her's
+Stupidity Tries - Elliott Smith
+Pa que no me olvides - Manuel García
+Knockin' on Heaven's Door - Bob Dylan
+Legends - Juice WRLD
+Like Janis - Sixto Rodríguez
+The Ultracheese - Arctic Monkeys
+Zombie - The Cranberries
+Mr. Tambourine Man - The Byrds
+Homecoming Queen - Sparklehorse
+Highway Tune - Greta Van Fleet
+The Bucket - Kings of Leon
+Alice - Tom Waits
+Wax the Van - Arthur Russell
+In Your Eyes - Peter Gabriel
+Can't Be Mine - Bad Nerves
+Establishment Blues - Sixto Rodríguez
+New Dawn Fades - Joy Division
+Te llevo para que me lleves - Soda Stereo
+Dancing in the Dark - Bruce Springsteen
+Kids 1995 - Been Stellar
+Thunder Road - Springsteen
+Rio - Manuel García
+My Favorite Things - John Coltrane
+In the Ghetto - Elvis
+Name of the Game - Badfinger
+Sun Tan - Wallows
+Ode to My Family - The Cranberries
+Good Vibrations - The Beach Boys
+Coastlines - Wallows
+Baby Drummer - Bad Nerves
+Northern Sky - Nick Drake
+Transmission - Joy Division
+She Don't Care About Time - Gene Clark / The Byrds
+Valerie - Amy Winehouse
+Tarde - Los Bunkers
+Palace - Bad Nerves
+Tiempos de hoy - Manuel García
+Hand in Glove - The Smiths
+Quién Fuera - Silvio Rodríguez
+Either Way - Wallows
+All Girls Are the Same - Juice WRLD
+Donna Donna - Joan Baez
+I'll Be Your Girl - Her's
+Tren al sur - Los Prisioneros
+Disintegration - The Cure
+Street Spirit (Fade Out) - Radiohead
+Roman Candle - Elliott Smith
+Twilight - Elliott Smith
+Tears Dry on Their Own - Amy Winehouse
+Fruit Tree - Nick Drake
+A Simple Twist of Fate - Bob Dylan
+Cross Road Blues - Robert Johnson
+Rabo de nube - Silvio Rodríguez
+Big - Fontaines D.C.
+Old Pine - Ben Howard
+The Black Crow - Songs: Ohia
+The Ship Song - Nick Cave
+Riders on the Storm - The Doors
+Giant Steps - John Coltrane
+Another Thought - Arthur Russell
+Train in Vain - The Clash
+Career Opportunities - The Clash
+Age of Machine - Greta Van Fleet
+Sweet Talkin' Woman - ELO
+Ne Me Quitte Pas - Nina Simone
+Beware of Darkness - George Harrison
+Karma Police - Radiohead
+El derecho de vivir en paz - Víctor Jara
+Sueño con serpientes - Silvio Rodríguez
+Décimas autobiográficas - Violeta Parra
+Song to the Siren - Tim Buckley
+Passing Judgement - Been Stellar
+Nothing Compares 2 U (cover) - Chris Cornell
+Not Dark Yet - Bob Dylan
+Sail to the Moon - Radiohead
+Red Right Hand - Nick Cave
+Don't Bring Me Down - ELO
+Sandrevan Lullaby - Sixto Rodríguez
+La Torre de Babel - Los Bunkers
+Time - Tom Waits
+In Between Days - The Cure
+Plainsong - The Cure
+Pequeña serenata diurna - Silvio Rodríguez
+Sha Sha Sha - Fontaines D.C.
+Cornelia Street - Taylor Swift (similar melodic sensibility to Ben Howard)
+Straight to Hell - The Clash
+Skeleton Tree - Nick Cave
+I'm on Fire - Springsteen
+Under Control - The Strokes
+My Honest Face - Inhaler
+Buzzin' Fly - Tim Buckley
+Bottle Up and Explode! - Elliott Smith
+If I Needed You - Townes Van Zandt
+The Eternal - Joy Division
+Like a Stone - Chris Cornell
+Slow Dancing in the Dark - Joji
+Thunderstruck - Nick Cave
+Unicornio - Silvio Rodríguez
+Beautiful Faces - Declan McKenna
+How to Disappear Completely - Radiohead
+Boys in the Better Land - Fontaines D.C.
+Twenty Four Hours - Joy Division
+Chicken Tenders - Dominic Fike
+Pancho and Lefty - Townes Van Zandt
+Plegaria a un labrador - Víctor Jara
+Electric 88 - Bad Nerves
+Phantasmagoria in Two - Tim Buckley
+La vuelta al sol - Diego Lorenzini
+These Days - Wallows
+Please Please Please Let Me Get What I Want - The Smiths
+Wishing Well - Juice WRLD
+Me and Your Mama - Childish Gambino
+11 Minutes - Yungblud
+Hallelujah - Jeff Buckley
+Playa Girón - Silvio Rodríguez
+A Forest - The Cure
+Dead Leaves and the Dirty Ground - The White Stripes
+Keep Your Head Up - Ben Howard
+Cuando pase el temblor - Soda Stereo
+Redbone - Childish Gambino
+Isn't It a Pity - George Harrison
+Hellhound on My Trail - Robert Johnson
+Nada Personal - Soda Stereo
+Suspicions Minds - Elvis
+Run of the Mill - George Harrison
+How Soon Is Now? - The Smiths
+Always on My Mind - Elvis
+Reckoner - Radiohead
+Higgs Boson Blues - Nick Cave
+El perro y la luna - Manuel García
+Small Worlds - Mac Miller
+Zona de promesas - Soda Stereo
+Quién mató a Marilyn - Los Bunkers
+Cello Song - Nick Drake
+Ashes to Ashes - David Bowie
+Quiero Ver - Los Prisioneros
+Cuando voy al trabajo - Víctor Jara
+Atlantic City - Bruce Springsteen
+Marcel - Her's
+Dorothy - Her's
+Without You - Badfinger
+People Ain't No Good - Nick Cave
+If Only Tonight We Could Sleep - The Cure
+Dang! - Mac Miller
+Qué he sacado con quererte - Violeta Parra
+Rock 'n' Roll Suicide - David Bowie
+Lady Grinning Soul - David Bowie
+Born to Run - Bruce Springsteen
+Be an Astronaut - Declan McKenna
+Don't Answer Me - Alan Parsons Project
+Televised Mind - Fontaines D.C.
+Jubilee Street - Nick Cave
+It Won't Always Be Like This - Inhaler
+Do I Wanna Know? - Arctic Monkeys
+Exit Music (For a Film) - Radiohead
+Signos - Soda Stereo
+Ol' 55 - Tom Waits
+Behind That Locked Door - George Harrison
+Parents - Yungblud
+Icky Thump - The White Stripes
+Safari Song - Greta Van Fleet
+Love Will Tear Us Apart - Joy Division
+Jesus of Suburbia - Green Day
+Knocked Up - Kings of Leon
+Wake Up Alone - Amy Winehouse
+Waitin' Around to Die - Townes Van Zandt
+Me Voy - Los Bunkers
+Time Has Told Me - Nick Drake
+Five Years - David Bowie
+Naima - John Coltrane
+A Little Lost - Arthur Russell
+Come and Get It - Badfinger
+Bocanada - Cerati
+Reptilia - The Strokes
+Livin' Thing - ELO
+Diablo - Mac Miller
+Street Boy - Sixto Rodríguez
+Breathless - Nick Cave
+Piel vampiro - Soda Stereo
+We Shall Overcome - Joan Baez
+Strange Fruit - Nina Sinone
+505 - Arctic Monkeys
+Telephone Line - ELO
+It's All Over Now, Baby Blue - Bob Dylan
+Silver Dagger - Joan Baez
+Terrified - Childish Gambino
+Desolation Row - Bob Dylan
+Heaven Knows I'm Miserable Now - The Smiths
