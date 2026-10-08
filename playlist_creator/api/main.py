@@ -18,6 +18,7 @@ from playlist_creator.api.routes import account, playlists
 from playlist_creator.config import Settings, get_settings
 from playlist_creator.core.credentials import CredentialStore, FileCredentialStore
 from playlist_creator.core.music import YTMusicClient
+from playlist_creator.core.supabase_store import SupabaseCredentialStore
 
 log = logging.getLogger("playlist_creator")
 
@@ -30,13 +31,32 @@ def _import_legacy_headers(settings: Settings, store: CredentialStore) -> None:
         log.info("Credenciales importadas desde %s", legacy)
 
 
+def _build_store(settings: Settings) -> CredentialStore:
+    if settings.credential_store == "file":
+        return FileCredentialStore(settings.data_dir)
+
+    required = {
+        "SUPABASE_URL": settings.supabase_url,
+        "SUPABASE_SERVICE_KEY": settings.supabase_service_key,
+        "CREDENTIALS_ENCRYPTION_KEY": settings.credentials_encryption_key,
+    }
+    missing = [name for name, value in required.items() if not value]
+    if missing:
+        raise RuntimeError(f"CREDENTIAL_STORE=supabase requiere definir: {', '.join(missing)}")
+    return SupabaseCredentialStore(
+        settings.supabase_url, settings.supabase_service_key, settings.credentials_encryption_key
+    )
+
+
 def create_app(
     settings: Settings | None = None,
     credential_store: CredentialStore | None = None,
     client_factory: ClientFactory | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
-    store = credential_store or FileCredentialStore(settings.data_dir)
+    if settings.auth_mode == "supabase" and not settings.supabase_url:
+        raise RuntimeError("AUTH_MODE=supabase requiere definir SUPABASE_URL")
+    store = credential_store or _build_store(settings)
     jobs = JobManager(settings.job_workers, settings.batch_size, settings.batch_delay_seconds)
 
     @asynccontextmanager
