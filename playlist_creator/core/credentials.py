@@ -126,6 +126,7 @@ class FileCredentialStore:
         self.dir.mkdir(parents=True, exist_ok=True)
         path = self._path(user_id)
         fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+        os.fchmod(fd, 0o600)  # el modo de os.open solo aplica al crear el archivo
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             json.dump(headers, f, indent=2)
 

@@ -57,9 +57,10 @@ def run_job(
 
     try:
         used_ids: set[str] = set()
+        if job.playlist_id:
+            job.playlist_id = extract_playlist_id(job.playlist_id)
         if not job.dry_run:
             if job.playlist_id:
-                job.playlist_id = extract_playlist_id(job.playlist_id)
                 used_ids = client.get_playlist_video_ids(job.playlist_id)
             else:
                 job.playlist_id = client.create_playlist(job.name or "Playlist", job.description or "", job.privacy)
@@ -93,6 +94,8 @@ def run_job(
                 except Exception as exc:  # noqa: BLE001
                     for item in to_add:
                         item.status, item.error = ItemStatus.ERROR, f"No se pudo agregar: {exc}"
+                        # Si la canción se repite más adelante, que se vuelva a intentar
+                        used_ids.discard(item.track.video_id)
                     _recount(job)
                 on_update(job)
 
