@@ -1,26 +1,57 @@
-#!/bin/bash
-# Script auxiliar para ejecutar el creador de playlists
+#!/usr/bin/env bash
+# Levanta la API (FastAPI con uvicorn) y, si existe frontend/node_modules, también la UI (Vite).
+# Ctrl+C detiene ambos procesos.
+set -euo pipefail
 
-echo "🎸 YouTube Music Playlist Creator"
-echo "=================================="
-echo ""
-echo "⚠️  IMPORTANTE: Primero necesitas configurar la autenticación"
-echo ""
-echo "📝 Pasos para obtener las credenciales:"
-echo "1. Abre Chrome y ve a https://music.youtube.com"
-echo "2. Inicia sesión si no lo has hecho"
-echo "3. Presiona F12 para abrir DevTools"
-echo "4. Ve a la pestaña 'Network' (Red)"
-echo "5. Busca en la página (reproduce una canción o navega)"
-echo "6. Busca una petición POST que contenga 'browse?key='"
-echo "7. Click derecho en la petición → Copy → Copy as cURL"
-echo "8. Pega TODO el comando en un archivo llamado 'paste.txt'"
-echo ""
-echo "Cuando tengas paste.txt listo, presiona ENTER para continuar..."
-read -p ""
+cd "$(dirname "$0")"
 
-# Activar entorno virtual
-source venv/bin/activate
+if [ ! -d .venv ]; then
+  echo "Creando entorno virtual en .venv..."
+  python3 -m venv .venv
+fi
 
-# Ejecutar el script
-python3 ytmusic_playlist_creator.py
+# shellcheck disable=SC1091
+source .venv/bin/activate
+echo "Instalando dependencias de Python..."
+if command -v uv >/dev/null 2>&1; then
+  uv pip install -q -r requirements.txt
+else
+  python -m pip install -q -r requirements.txt
+fi
+
+# Detiene un proceso y sus hijos (por ejemplo, npm y el vite que lanza).
+kill_tree() {
+  local pid="$1" child
+  for child in $(pgrep -P "$pid" 2>/dev/null || true); do
+    kill_tree "$child"
+  done
+  kill "$pid" 2>/dev/null || true
+}
+
+PIDS=()
+cleanup() {
+  trap - INT TERM EXIT
+  echo ""
+  echo "Deteniendo procesos..."
+  for pid in ${PIDS[@]+"${PIDS[@]}"}; do
+    kill_tree "$pid"
+  done
+  wait 2>/dev/null || true
+  exit 0
+}
+trap cleanup INT TERM EXIT
+
+uvicorn playlist_creator.api.main:app --reload --port 8000 &
+PIDS+=("$!")
+echo "API: http://localhost:8000 (documentación en /docs)"
+
+if [ -d frontend/node_modules ]; then
+  (cd frontend && exec npm run dev) &
+  PIDS+=("$!")
+  echo "UI:  http://localhost:5173"
+else
+  echo "Aviso: no existe frontend/node_modules; solo se levanta la API."
+  echo "       Para la UI ejecuta: cd frontend && npm install"
+fi
+
+wait

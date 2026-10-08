@@ -1,0 +1,62 @@
+name: Deploy frontend a GitHub Pages
+
+# Solo manual: así no falla si GitHub Pages aún no está activado en el repositorio.
+# Requisitos: Settings → Pages → Source: "GitHub Actions", y las variables de Actions
+# (Settings → Secrets and variables → Actions → Variables): API_BASE_URL, SUPABASE_URL, SUPABASE_ANON_KEY.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Compilar frontend
+    runs-on: ubuntu-latest
+    env:
+      VITE_BASE: "/${{ github.event.repository.name }}/"
+      VITE_API_BASE_URL: ${{ vars.API_BASE_URL }}
+      VITE_SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Instalar dependencias
+        working-directory: frontend
+        run: npm ci
+
+      - name: Compilar
+        working-directory: frontend
+        run: npm run build
+
+      - name: Subir artefacto
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    name: Publicar en Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Desplegar
+        id: deployment
+        uses: actions/deploy-pages@v4

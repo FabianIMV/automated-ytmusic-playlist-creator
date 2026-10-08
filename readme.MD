@@ -4,79 +4,41 @@
 
 # YouTube Music Playlist Creator
 
-Automate the creation of YouTube Music playlists from concert setlists. Perfect for music lovers who attend multiple concerts and want their setlists ready to go.
+Turn concert setlists into YouTube Music playlists. Paste a song list, a text file, or a setlist.fm URL, and the app searches every song and builds the playlist for you.
 
-## What it does
+Version 2 offers three ways to use it: a web UI, a REST API (with a Postman collection), and the original CLI.
 
-- Reads song lists from a text file
-- Automatically searches and adds songs to YouTube Music
-- Creates playlists with batch processing
-- Handles authentication via browser headers
+## Quick start (local)
 
-## Setup
-
-1. **Install dependencies**
 ```bash
-pip install ytmusicapi
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn playlist_creator.api.main:app --reload     # API on http://localhost:8000
+
+# In another terminal, for the web UI:
+cd frontend && npm install && npm run dev          # UI on http://localhost:5173
 ```
 
-2. **Get your YouTube Music headers**
-   - Go to https://music.youtube.com in Chrome
-   - Open DevTools (F12) → Network tab
-   - Find any POST request to `browse?key=`
-   - Right-click → Copy → Copy as cURL
-   - Paste the entire cURL command into `paste.txt`
-
-3. **Create your setlist**
-   - Create `setlist.txt` with format:
-   ```
-   Artist - Song Title
-   Oasis - Wonderwall
-   Billy Idol - White Wedding
-   Morrissey - This Charming Man
-   ```
+Then connect your YouTube Music account from the UI by pasting the cURL copied from your browser's DevTools.
 
 ## Usage
 
-```bash
-python3 ytmusic_playlist_creator.py
-```
+- **Web UI:** http://localhost:5173
+- **API docs:** http://localhost:8000/docs
+- **Postman:** import `postman/ytmusic-playlist-creator.postman_collection.json`
+- **CLI:** `python3 ytmusic_playlist_creator.py -f setlist.txt`
 
-The script will:
-- Read songs from `setlist.txt`
-- Show you a preview
-- Ask for playlist name
-- Create the playlist automatically
+## Deploy
 
-## File Structure
-
-```
-ytmusic-playlist-creator/
-├── ytmusic_playlist_creator.py  # Main script
-├── setlist.txt                  # Your song list (create this)
-├── paste.txt                    # cURL headers (create this)
-└── headers_auth.json           # Generated automatically
-```
-
-## Updating
-
-- **New setlist**: Update `setlist.txt` and run the script
-- **Expired headers** (401 error): Update `paste.txt` with fresh cURL
-
-## Example
-
-Input (`setlist.txt`):
-```
-Oasis - Hello
-Oasis - Acquiesce
-Billy Idol - Rebel Yell
-Morrissey - How Soon Is Now
-```
-
-Output: YouTube Music playlist with all found songs
+The app runs as a single container (API + built frontend) on Render, with Supabase for Google login and encrypted credentials. See [README_ES.md](README_ES.md) for the step-by-step guide (in Spanish) and [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md) for the architecture and deploy strategy.
 
 ## Notes
 
-- Headers expire periodically - update `paste.txt` when you get 401 errors
-- Songs not found in YouTube Music will be skipped
-- Works with any artist/song combination
+- YouTube Music headers expire periodically. Reconnect the account from the UI when you get an authentication error.
+- Songs that are not found are reported at the end instead of failing the whole playlist.
+- Your cookies are full access to your Google account: keep `.env`, `data/` and `headers_auth.json` private.
+
+## License
+
+MIT

@@ -1,0 +1,35 @@
+# Render Blueprint: un solo web service (API + frontend compilado) construido desde el Dockerfile.
+# Para crearlo: Render → New → Blueprint → elegir este repositorio.
+#
+# Variables VITE_* (build args): Render pasa las variables de entorno al `docker build` como build args,
+# siempre que el Dockerfile las declare con ARG. Ya lo hace (ARG VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY).
+# Son públicas por diseño (la anon key de Supabase viaja en el navegador). Si cambias su valor,
+# vuelve a desplegar para recompilar el frontend.
+
+services:
+  - type: web
+    name: ytmusic-playlist-creator
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: AUTH_MODE
+        value: supabase
+      - key: CREDENTIAL_STORE
+        value: supabase
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+      - key: CREDENTIALS_ENCRYPTION_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      # Build args del frontend (ver comentario de arriba)
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false

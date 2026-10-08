@@ -1,5 +1,7 @@
 # 🎸 Guía Rápida - Crear Playlists de My Chemical Romance y The Hives
 
+> **Nota (v2):** ahora existe una **UI web** (frontend en `frontend/`) y una **API** con colección de Postman. Para la configuración actualizada (inicio local, conexión con YouTube Music, API y despliegue), consulta [README_ES.md](README_ES.md). El menú interactivo de `run.sh` que describe esta guía ya no existe en esa forma.
+
 ## 📋 Paso 1: Configurar Autenticación (SOLO UNA VEZ)
 
 1. **Abre Chrome** y ve a: https://music.youtube.com

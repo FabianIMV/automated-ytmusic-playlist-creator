@@ -1,0 +1,363 @@
+{
+  "info": {
+    "_postman_id": "3f8e1c52-7a4b-4d2e-9c61-5b0a2f9d7e13",
+    "name": "YouTube Music Playlist Creator",
+    "description": "Colección para probar la API de YouTube Music Playlist Creator (v2).\n\n**Base URL:** variable `baseUrl` (por defecto `http://localhost:8000`).\n\n**Autenticación:** la colección usa Bearer `{{token}}`. En modo local (`AUTH_MODE=none`) puedes dejar `token` vacío. Con `AUTH_MODE=supabase`, copia el token desde la UI (menú de usuario → \"Copiar token de API\") y pégalo en la variable `token`.\n\n**Orden sugerido:** Salud → Guardar credenciales YT → Setlists y búsqueda → Playlists → Jobs.\n\nDocumentación interactiva de la API: `/docs` (Swagger) y `/redoc`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "jobId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Salud y cuenta",
+      "description": "Estado de la API y conexión con YouTube Music (cookies/headers del navegador).",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/health",
+            "description": "Comprueba que la API responde. No requiere token.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/me",
+            "description": "Usuario actual y estado de YouTube Music (`ytmusic.connected`)."
+          },
+          "response": []
+        },
+        {
+          "name": "Estado credenciales YT",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/ytmusic/credentials",
+            "description": "Indica si la cuenta de YouTube Music está conectada. Si no lo está, `error` trae el motivo."
+          },
+          "response": []
+        },
+        {
+          "name": "Guardar credenciales YT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/ytmusic/credentials",
+            "description": "Valida el cURL copiado desde DevTools ('Copy as cURL') y lo guarda si funciona. Responde 422 si las credenciales no sirven. Reemplaza el ejemplo por tu cURL real.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"raw\": \"curl 'https://music.youtube.com/youtubei/v1/browse?...' -H 'authorization: SAPISIDHASH ...' -b '...'\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Borrar credenciales YT",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/ytmusic/credentials",
+            "description": "Elimina las credenciales guardadas del usuario. Responde 204."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Setlists y búsqueda",
+      "description": "Interpreta una fuente sin tocar YouTube Music y busca canciones individuales.",
+      "item": [
+        {
+          "name": "Analizar setlist (texto)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/setlists/parse",
+            "description": "Convierte texto (una canción por línea, `Artista - Canción`) en un Setlist. No escribe nada.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"text\",\n  \"text\": \"Oasis - Wonderwall\\nBlur - Song 2\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Analizar setlist (setlist.fm)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/setlists/parse",
+            "description": "Lee artista, evento y canciones desde una URL de setlist.fm. Cambia la URL por la de tu concierto.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"setlistfm\",\n  \"url\": \"https://www.setlist.fm/setlist/the-hives/2025/teatro-caupolican-santiago-chile-1234abcd.html\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar canción",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/search?q=Oasis%20-%20Wonderwall",
+            "description": "Busca la mejor coincidencia para una canción. Responde `track: null` si no hay resultados."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Playlists",
+      "description": "Crea una playlist o agrega canciones a una existente. Devuelve un job (202) para seguir el progreso.",
+      "item": [
+        {
+          "name": "Crear desde lista (songs)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/playlists",
+            "description": "Crea una playlist privada desde una lista explícita. Guarda el `jobId` para la petición 'Ver job'.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"type\": \"songs\",\n    \"songs\": [\n      \"Oasis - Wonderwall\",\n      \"Blur - Song 2\"\n    ]\n  },\n  \"name\": \"Britpop\",\n  \"privacy\": \"PRIVATE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 202 || pm.response.code === 200) {",
+                  "    pm.collectionVariables.set(\"jobId\", pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Crear desde texto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/playlists",
+            "description": "Crea una playlist no listada desde texto libre (una canción por línea).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"type\": \"text\",\n    \"text\": \"Oasis - Hello\\nOasis - Acquiesce\\nBilly Idol - Rebel Yell\"\n  },\n  \"name\": \"Setlist desde texto\",\n  \"privacy\": \"UNLISTED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear desde setlist.fm",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/playlists",
+            "description": "Crea una playlist pública a partir de una URL de setlist.fm. Requiere credenciales de YouTube Music.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"type\": \"setlistfm\",\n    \"url\": \"https://www.setlist.fm/setlist/the-hives/2025/teatro-caupolican-santiago-chile-1234abcd.html\"\n  },\n  \"privacy\": \"PUBLIC\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Agregar a playlist existente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/playlists",
+            "description": "Agrega las canciones a una playlist que ya existe. `playlist_id` acepta el ID o la URL de la playlist.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"type\": \"songs\",\n    \"songs\": [\n      \"Oasis - Wonderwall\",\n      \"Blur - Song 2\"\n    ]\n  },\n  \"playlist_id\": \"PLxxxxxxxxxxxxxxxxxxxxxxxx\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Dry run (solo buscar)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/playlists",
+            "description": "Solo busca las canciones y muestra el resultado. No escribe en YouTube Music, así que no requiere credenciales.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"type\": \"songs\",\n    \"songs\": [\n      \"Oasis - Wonderwall\",\n      \"Blur - Song 2\"\n    ]\n  },\n  \"dry_run\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Crear con wait=true",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/playlists?wait=true",
+            "description": "Espera a que termine el job y responde 200 con el resultado final. Práctico en Postman.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"type\": \"songs\",\n    \"songs\": [\n      \"Oasis - Wonderwall\",\n      \"Blur - Song 2\"\n    ]\n  },\n  \"name\": \"Britpop\",\n  \"privacy\": \"PRIVATE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Jobs",
+      "description": "Seguimiento de los jobs creados por la API (en memoria; se pierden si la instancia se reinicia).",
+      "item": [
+        {
+          "name": "Listar jobs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/jobs",
+            "description": "Jobs del usuario, más recientes primero, sin el detalle por canción."
+          },
+          "response": []
+        },
+        {
+          "name": "Ver job",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/jobs/{{jobId}}",
+            "description": "Detalle de un job: `status`, `summary` y `items`. Usa la variable `jobId` (la guarda 'Crear desde lista')."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
