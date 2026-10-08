@@ -190,7 +190,7 @@ def test_me_local_desconectado(api_env):
     body = api_env.client.get("/api/me").json()
     assert body["user"]["id"] == "local"
     assert body["auth_mode"] == "none"
-    assert body["ytmusic"] == {"connected": False, "account": None, "error": None}
+    assert body["ytmusic"] == {"connected": False, "mode": None, "account": None, "error": None}
     assert api_env.music.factory_calls == []  # sin credenciales no se consulta a YouTube Music
 
 

@@ -28,6 +28,11 @@ services:
         sync: false
       - key: CORS_ORIGINS
         sync: false
+      # Modo simple ("Conectar con Google"): el mismo cliente OAuth que configuraste en Supabase
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
       # Build args del frontend (ver comentario de arriba)
       - key: VITE_SUPABASE_URL
         sync: false

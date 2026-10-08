@@ -51,7 +51,19 @@ También puedes ejecutar `./run.sh`. Crea `.venv` si no existe, instala las depe
 
 ## 🎵 Conecta tu cuenta de YouTube Music
 
-La app usa las cabeceras de tu sesión del navegador para escribir en tu cuenta. Solo tienes que copiarlas una vez, y repetir el proceso cuando caduquen:
+Hay dos modos. El **modo simple** es el predeterminado; el avanzado solo se usa si lo eliges.
+
+### Modo simple: Conectar con Google (predeterminado)
+
+Al iniciar sesión con Google, la app pide permiso para administrar tu cuenta de YouTube y crea las playlists con la **YouTube Data API** oficial. No hay que copiar nada y el permiso se renueva solo. Las playlists aparecen igual en YouTube Music.
+
+- **Límite:** la cuota gratuita es de 10.000 unidades al día y cada canción agregada cuesta 50, así que alcanza para **unas 200 canciones por día** (para todo el proyecto). Si se agota, el job se detiene y puedes reintentar al día siguiente o usar el modo avanzado.
+- Requiere `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` en el backend y Supabase configurado en el frontend.
+- Las búsquedas se hacen en YouTube Music sin sesión. Si alguna canción sale como cover o video, prueba el modo avanzado.
+
+### Modo avanzado: cURL
+
+Para listas grandes, o si la búsqueda no encuentra bien tus canciones. En el modal de conexión elige **Usar modo avanzado (cURL)**. La app usa las cabeceras de tu sesión del navegador; solo tienes que copiarlas una vez y repetir el proceso cuando caduquen:
 
 1. Abre https://music.youtube.com en Chrome e inicia sesión.
 2. Presiona **F12** y ve a la pestaña **Network** (Red).
@@ -130,6 +142,15 @@ La arquitectura de producción es un **solo contenedor** (API + frontend compila
 1. En el menú lateral (no en Project Settings), ve a **Authentication → Sign In / Providers → Google** y actívalo.
 2. Pega el **Client ID** y el **Client Secret** de un cliente OAuth creado en Google Cloud Console. En Google Cloud, usa como URI de redirección el que muestra Supabase en esa misma pantalla.
 
+### 2b. Preparar el modo simple (Conectar con Google)
+
+En [Google Cloud Console](https://console.cloud.google.com), en el mismo proyecto del cliente OAuth:
+
+1. **APIs & Services → Library → YouTube Data API v3 → Enable.**
+2. **Google Auth Platform → Data Access → Add or remove scopes:** agrega `https://www.googleapis.com/auth/youtube`.
+3. **Google Auth Platform → Audience:** si la app está en *Testing*, Google vence el permiso cada 7 días y tendrás que volver a conectar. Para evitarlo, pásala a **In production** (sin verificar sigue funcionando para hasta 100 usuarios; Google muestra un aviso de "app no verificada" y basta con elegir *Continuar*).
+4. Guarda el **Client ID** y el **Client Secret** para `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` en Render.
+
 ### 3. Generar la clave de cifrado
 
 ```bash
@@ -148,6 +169,8 @@ Guarda el resultado: será el valor de `CREDENTIALS_ENCRYPTION_KEY`. Si lo pierd
    | `SUPABASE_URL` | Project URL del paso 1 |
    | `SUPABASE_SERVICE_KEY` | service_role / secret key del paso 1 |
    | `CREDENTIALS_ENCRYPTION_KEY` | La clave Fernet del paso 3 |
+   | `GOOGLE_CLIENT_ID` | Client ID del cliente OAuth de Google (el mismo de Supabase) |
+   | `GOOGLE_CLIENT_SECRET` | Client Secret de ese cliente |
    | `CORS_ORIGINS` | Vacío si usas solo Render. Si usas GitHub Pages, `https://<tu-usuario>.github.io` |
    | `VITE_SUPABASE_URL` | El mismo valor que `SUPABASE_URL` |
    | `VITE_SUPABASE_ANON_KEY` | La anon key del paso 1 |

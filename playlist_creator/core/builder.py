@@ -92,11 +92,18 @@ def run_job(
                     client.add_items(job.playlist_id, [i.track.video_id for i in to_add])
                     job.summary.added += len(to_add)
                 except Exception as exc:  # noqa: BLE001
+                    # Algunos clientes informan qué canciones fallaron (el resto sí se agregó)
+                    failed_ids = getattr(exc, "failed_ids", None)
                     for item in to_add:
+                        if failed_ids is not None and item.track.video_id not in failed_ids:
+                            job.summary.added += 1
+                            continue
                         item.status, item.error = ItemStatus.ERROR, f"No se pudo agregar: {exc}"
                         # Si la canción se repite más adelante, que se vuelva a intentar
                         used_ids.discard(item.track.video_id)
                     _recount(job)
+                    if getattr(exc, "fatal", False):  # p. ej. cuota agotada: seguir no sirve
+                        raise
                 on_update(job)
 
             if batch_num < len(batches) and not job.dry_run:
@@ -113,5 +120,6 @@ def run_job(
 
 
 def not_found_queries(job: Job) -> list[str]:
-    """Canciones a reintentar (no encontradas o con error)."""
-    return [i.query for i in job.items if i.status in (ItemStatus.NOT_FOUND, ItemStatus.ERROR)]
+    """Canciones a reintentar (no encontradas, con error o sin procesar si el job se cortó)."""
+    retry = (ItemStatus.NOT_FOUND, ItemStatus.ERROR, ItemStatus.PENDING)
+    return [i.query for i in job.items if i.status in retry]

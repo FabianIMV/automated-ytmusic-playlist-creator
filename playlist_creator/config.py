@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     #   python3 -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"
     credentials_encryption_key: str | None = None
 
+    # Modo simple ("Conectar con Google"): el mismo cliente OAuth configurado en Supabase.
+    # Se usan para renovar el token de YouTube de cada usuario. Sin ellos solo queda el modo cURL.
+    google_client_id: str | None = None
+    google_client_secret: str | None = None
+
     data_dir: Path = Path("data")
     # headers_auth.json de la CLI: si existe, se importa para el usuario "local" al arrancar.
     legacy_headers_file: Path = Path("headers_auth.json")
@@ -43,6 +48,10 @@ class Settings(BaseSettings):
     job_workers: int = 2
     max_songs_per_job: int = 1000
     ytmusic_language: str = "en"
+
+    @property
+    def google_connect_enabled(self) -> bool:
+        return bool(self.google_client_id and self.google_client_secret)
 
     @field_validator("cors_origins", mode="before")
     @classmethod

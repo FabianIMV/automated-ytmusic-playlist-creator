@@ -54,11 +54,12 @@ Errores: `{"detail": "mensaje"}` (o la lista de errores de validación de FastAP
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| GET | `/api/health` | `{status, version, auth_mode}` |
+| GET | `/api/health` | `{status, version, auth_mode, google_connect}` |
 | GET | `/api/me` | `{user:{id,email,name,avatar_url}, auth_mode, ytmusic: YTMusicStatus}` |
-| GET | `/api/ytmusic/credentials` | `YTMusicStatus` = `{connected, account:{name,handle,photo_url}\|null, error}` |
+| GET | `/api/ytmusic/credentials` | `YTMusicStatus` = `{connected, mode: "google"\|"browser"\|null, account:{name,handle,photo_url}\|null, error}` |
 | PUT | `/api/ytmusic/credentials` | Body `{raw: "<cURL o headers>"}`. Valida contra YouTube Music y guarda. 422 si no sirven |
-| DELETE | `/api/ytmusic/credentials` | 204 |
+| PUT | `/api/ytmusic/google` | Body `{refresh_token}` (modo simple). Valida con la YouTube Data API y guarda. 422 si Google lo rechaza, 503 si faltan `GOOGLE_CLIENT_ID/SECRET` |
+| DELETE | `/api/ytmusic/credentials` | 204 (desconecta cualquiera de los dos modos) |
 | POST | `/api/setlists/parse` | Body `Source`. Devuelve `Setlist` (no toca YouTube Music) |
 | GET | `/api/search?q=...` | `{query, track: Track\|null}` |
 | POST | `/api/playlists[?wait=true]` | Body `PlaylistRequest`. 202 + `Job` (o 200 + `Job` terminado con `wait=true`). 409 si no hay credenciales y no es `dry_run` |
@@ -127,11 +128,15 @@ Notas:
      si no, valida con las llaves públicas JWKS del proyecto).
    - Postman: copiar el token desde la UI (menú de usuario → "Copiar token de API").
 
-La sesión de Google identifica **quién** eres. Para **escribir** en YouTube Music se siguen usando los
-headers del navegador (pegados una vez por usuario desde la UI). Alternativa futura: pedir el scope
-`https://www.googleapis.com/auth/youtube` en el login de Google y usar la YouTube Data API v3 con ese
-token (oficial, sin copiar cookies), implementando otro `MusicClient`. Contra: cuota de 10.000
-unidades/día y cada canción agregada cuesta 50 (~200 canciones/día) salvo que Google amplíe la cuota.
+Para **escribir** en YouTube hay dos modos, cada uno un `MusicClient`:
+
+- **Simple (predeterminado):** el login con Google pide además el scope `https://www.googleapis.com/auth/youtube`
+  con `access_type=offline`. El frontend envía el `provider_refresh_token` de Supabase a
+  `PUT /api/ytmusic/google`; el backend lo guarda cifrado y lo canjea por access tokens con
+  `GOOGLE_CLIENT_ID/SECRET` (`core/youtube_api.py`). Escribe con la YouTube Data API v3 y busca con
+  ytmusicapi sin sesión. Cuota: 10.000 unidades/día, 50 por canción (~200 canciones/día); si se agota,
+  el job falla con un mensaje claro y las canciones pendientes quedan para reintentar.
+- **Avanzado (cURL):** headers del navegador pegados desde la UI; ytmusicapi con sesión, sin cuota.
 
 ## Deploy ("que viva solito")
 

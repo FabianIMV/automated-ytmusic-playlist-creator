@@ -335,13 +335,13 @@ def test_not_found_queries_incluye_no_encontradas_y_errores_en_orden():
     assert not_found_queries(job) == ["nf", "err"]
 
 
-def test_not_found_queries_sin_pendientes_devuelve_lista_vacia():
+def test_not_found_queries_incluye_pendientes_de_un_job_cortado():
     job = prepared(["A - a"])
 
-    assert not_found_queries(job) == []
+    assert not_found_queries(job) == ["A - a"]
 
 
-# --- Caso que revela un bug en el núcleo -----------------------------------
+# --- Regresión: repetición después de un lote fallido ---------------------
 
 
 def test_repeticion_tras_fallo_de_add_no_se_pierde():

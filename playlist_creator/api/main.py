@@ -17,8 +17,9 @@ from playlist_creator.api.jobs import JobManager
 from playlist_creator.api.routes import account, playlists
 from playlist_creator.config import Settings, get_settings
 from playlist_creator.core.credentials import CredentialStore, FileCredentialStore
-from playlist_creator.core.music import YTMusicClient
+from playlist_creator.core.music import MusicClient, YTMusicClient
 from playlist_creator.core.supabase_store import SupabaseCredentialStore
+from playlist_creator.core.youtube_api import YouTubeDataApiClient, is_google_credentials
 
 log = logging.getLogger("playlist_creator")
 
@@ -48,6 +49,24 @@ def _build_store(settings: Settings) -> CredentialStore:
     )
 
 
+def _default_client_factory(settings: Settings) -> ClientFactory:
+    """Elige el cliente según cómo se conectó el usuario: Google (Data API) o cURL (ytmusicapi)."""
+
+    def factory(creds: dict[str, str] | None) -> MusicClient:
+        if is_google_credentials(creds):
+            if not settings.google_connect_enabled:
+                raise RuntimeError("Faltan GOOGLE_CLIENT_ID y GOOGLE_CLIENT_SECRET en el servidor")
+            return YouTubeDataApiClient(
+                creds["refresh_token"],
+                settings.google_client_id,
+                settings.google_client_secret,
+                language=settings.ytmusic_language,
+            )
+        return YTMusicClient(creds, language=settings.ytmusic_language)
+
+    return factory
+
+
 def create_app(
     settings: Settings | None = None,
     credential_store: CredentialStore | None = None,
@@ -74,9 +93,7 @@ def create_app(
     app.dependency_overrides[get_settings] = lambda: settings
     app.state.credential_store = store
     app.state.jobs = jobs
-    app.state.client_factory = client_factory or (
-        lambda headers: YTMusicClient(headers, language=settings.ytmusic_language)
-    )
+    app.state.client_factory = client_factory or _default_client_factory(settings)
 
     app.add_middleware(
         CORSMiddleware,
