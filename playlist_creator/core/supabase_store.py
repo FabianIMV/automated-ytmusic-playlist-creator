@@ -34,8 +34,8 @@ class SupabaseCredentialStore:
         except (TypeError, ValueError) as exc:
             raise ValueError(
                 "CREDENTIALS_ENCRYPTION_KEY no es una clave Fernet válida (32 bytes en base64 url-safe). "
-                'Genera una con: python -c "from cryptography.fernet import Fernet; '
-                'print(Fernet.generate_key().decode())"'
+                'Genera una con: python3 -c "import base64, os; '
+                'print(base64.urlsafe_b64encode(os.urandom(32)).decode())"'
             ) from exc
         self.endpoint = f"{url.rstrip('/')}/rest/v1/{TABLE}"
         self.timeout = timeout

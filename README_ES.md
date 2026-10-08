@@ -127,13 +127,13 @@ La arquitectura de producción es un **solo contenedor** (API + frontend compila
 
 ### 2. Activar Google como proveedor
 
-1. Ve a **Authentication → Providers → Google** y actívalo.
+1. En el menú lateral (no en Project Settings), ve a **Authentication → Sign In / Providers → Google** y actívalo.
 2. Pega el **Client ID** y el **Client Secret** de un cliente OAuth creado en Google Cloud Console. En Google Cloud, usa como URI de redirección el que muestra Supabase en esa misma pantalla.
 
 ### 3. Generar la clave de cifrado
 
 ```bash
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+python3 -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"
 ```
 
 Guarda el resultado: será el valor de `CREDENTIALS_ENCRYPTION_KEY`. Si lo pierdes, las credenciales ya guardadas no se pueden descifrar y hay que volver a pegar el cURL.

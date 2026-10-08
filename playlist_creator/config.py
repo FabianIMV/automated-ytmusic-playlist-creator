@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     # Clave secreta del proyecto (sb_secret_... o service_role legacy). Solo en el backend.
     supabase_service_key: str | None = None
     # Clave Fernet para cifrar las credenciales en la base. Generar con:
-    #   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+    #   python3 -c "import base64, os; print(base64.urlsafe_b64encode(os.urandom(32)).decode())"
     credentials_encryption_key: str | None = None
 
     data_dir: Path = Path("data")
