@@ -69,7 +69,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!client) return
     const { error } = await client.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href },
+      // Siempre vuelve a la raíz de la app (sin #ruta ni query) para que calce con
+      // las Redirect URLs de Supabase, también bajo el subpath de GitHub Pages.
+      options: { redirectTo: window.location.origin + window.location.pathname },
     })
     if (error) toast('error', `No se pudo iniciar sesión con Google: ${error.message}`)
   }, [toast])
