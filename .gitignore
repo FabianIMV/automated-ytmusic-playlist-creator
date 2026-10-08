@@ -4,8 +4,15 @@ paste.txt
 .env
 .env.local
 
-# Testing files
-test_*.py
+# Scripts de prueba sueltos en la raíz (los tests viven en tests/)
+/test_*.py
+
+# Datos locales de la API (credenciales por usuario)
+data/
+
+# Frontend
+node_modules/
+frontend/dist/
 
 # Python
 __pycache__/
@@ -15,6 +22,8 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
+.pytest_cache/
 ENV/
 build/
 develop-eggs/
