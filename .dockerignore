@@ -23,6 +23,8 @@ failed_songs.txt
 **/failed_songs.txt
 .env
 .env.*
+**/.env
+**/.env.*
 **/*.log
 
 # Lo que no hace falta para ejecutar la API
