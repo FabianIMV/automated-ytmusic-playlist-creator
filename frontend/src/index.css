@@ -1,0 +1,262 @@
+@import 'tailwindcss';
+
+/* Tokens de diseño: oscuro por defecto, claro según prefers-color-scheme. */
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --color-info: var(--info);
+}
+
+:root {
+  color-scheme: dark;
+  --canvas: #0c0a12;
+  --surface: rgb(255 255 255 / 0.045);
+  --surface-2: rgb(255 255 255 / 0.075);
+  --raised: #171420;
+  --line: rgb(255 255 255 / 0.09);
+  --line-strong: rgb(255 255 255 / 0.18);
+  --fg: #f5f3f9;
+  --muted: #a8a3b6;
+  --faint: #8a8499;
+  --accent: #e0325a;
+  --accent-text: #ff8ba3;
+  --on-accent: #ffffff;
+  --ok: #34d399;
+  --warn: #fbbf24;
+  --bad: #fb7185;
+  --info: #7cb7ff;
+  --glow-1: rgb(255 98 70 / 0.16);
+  --glow-2: rgb(200 40 140 / 0.16);
+  --glow-3: rgb(110 60 220 / 0.1);
+  --card-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 18px 50px -24px rgb(0 0 0 / 0.7);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --canvas: #fbf8fa;
+    --surface: #ffffff;
+    --surface-2: #f3eef2;
+    --raised: #ffffff;
+    --line: rgb(48 24 60 / 0.1);
+    --line-strong: rgb(48 24 60 / 0.22);
+    --fg: #1d1824;
+    --muted: #5f5a6c;
+    --faint: #6f6a7c;
+    --accent: #d62a55;
+    --accent-text: #c01e49;
+    --ok: #0b7a54;
+    --warn: #a14a07;
+    --bad: #c42b2b;
+    --info: #1d5fd1;
+    --glow-1: rgb(255 120 90 / 0.18);
+    --glow-2: rgb(220 60 150 / 0.14);
+    --glow-3: rgb(120 80 230 / 0.08);
+    --card-shadow: 0 1px 2px rgb(48 24 60 / 0.06), 0 14px 36px -20px rgb(48 24 60 / 0.25);
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--canvas);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Brillo de fondo sutil (fijo, detrás del contenido). */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(56rem 30rem at 8% -12%, var(--glow-1), transparent 62%),
+    radial-gradient(50rem 28rem at 96% -8%, var(--glow-2), transparent 62%),
+    radial-gradient(44rem 28rem at 50% 112%, var(--glow-3), transparent 62%);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 45%, transparent);
+}
+
+/* Foco visible y accesible. */
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+button,
+[role='button'],
+summary,
+label[for],
+select {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* Tarjetas */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  box-shadow: var(--card-shadow);
+}
+
+/* Campos de formulario */
+.field {
+  width: 100%;
+  background: color-mix(in oklab, var(--canvas) 55%, transparent);
+  border: 1px solid var(--line-strong);
+  border-radius: 0.75rem;
+  color: var(--fg);
+  padding: 0.6rem 0.8rem;
+  font-size: 15px;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+.field::placeholder {
+  color: var(--faint);
+}
+.field:hover {
+  border-color: color-mix(in oklab, var(--fg) 35%, transparent);
+}
+.field:focus-visible {
+  outline: none;
+  border-color: var(--accent-text);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 30%, transparent);
+}
+.field:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Barra de progreso con brillo mientras corre */
+.progress-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgb(255 255 255 / 0.35) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: shine 1.6s ease-in-out infinite;
+}
+
+@keyframes shine {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulse-row {
+  0%,
+  100% {
+    background-color: color-mix(in oklab, var(--accent) 8%, transparent);
+  }
+  50% {
+    background-color: color-mix(in oklab, var(--accent) 16%, transparent);
+  }
+}
+
+@keyframes skeleton {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 200ms ease-out both;
+}
+.animate-pulse-row {
+  animation: pulse-row 1.4s ease-in-out infinite;
+}
+.animate-skeleton {
+  animation: skeleton 1.4s ease-in-out infinite;
+}
+
+dialog[open] {
+  animation: pop 180ms ease-out both;
+}
+dialog::backdrop {
+  background: rgb(6 4 12 / 0.65);
+  backdrop-filter: blur(4px);
+  animation: fade-up 180ms ease-out both;
+}
+
+/* Scrollbars discretas */
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

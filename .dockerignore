@@ -1,0 +1,33 @@
+# Entornos virtuales y caches de Python
+.venv
+venv
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+
+# Frontend: dependencias y build se generan dentro de la imagen
+**/node_modules
+frontend/dist
+
+# Git y CI
+.git
+.github
+
+# Datos locales y secretos: nunca dentro de la imagen
+data
+headers_auth.json
+**/headers_auth.json
+paste.txt
+**/paste.txt
+failed_songs.txt
+**/failed_songs.txt
+.env
+.env.*
+**/.env
+**/.env.*
+**/*.log
+
+# Lo que no hace falta para ejecutar la API
+tests
+docs
+postman

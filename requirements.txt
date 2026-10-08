@@ -1,0 +1,11 @@
+# Núcleo + CLI
+ytmusicapi>=1.12
+requests>=2.32
+beautifulsoup4>=4.12
+pydantic>=2.10
+# API
+fastapi>=0.140
+uvicorn[standard]>=0.30
+pydantic-settings>=2.6
+pyjwt[crypto]>=2.10
+cryptography>=43
