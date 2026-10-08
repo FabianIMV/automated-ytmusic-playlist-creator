@@ -11,7 +11,12 @@ interface AccountApi {
   /** Actualiza el estado de YouTube Music sin otra petición (tras conectar/desconectar). */
   setYtmusic: (status: YTMusicStatus) => void
   connectOpen: boolean
+  /** Abre el modal de conexión (en la vista por defecto: la simple si está disponible). */
   openConnect: () => void
+  /** Lo abre directamente en la vista del modo avanzado (cURL). */
+  openConnectAdvanced: () => void
+  /** Vista con la que se abrió el modal. */
+  connectInitial: 'default' | 'advanced'
   closeConnect: () => void
 }
 
@@ -22,6 +27,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [connectOpen, setConnectOpen] = useState(false)
+  const [connectInitial, setConnectInitial] = useState<'default' | 'advanced'>('default')
 
   const refresh = useCallback(async () => {
     setLoading(true)
@@ -43,12 +49,30 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     setMe((cur) => (cur ? { ...cur, ytmusic } : cur))
   }, [])
 
-  const openConnect = useCallback(() => setConnectOpen(true), [])
+  const openConnect = useCallback(() => {
+    setConnectInitial('default')
+    setConnectOpen(true)
+  }, [])
+  const openConnectAdvanced = useCallback(() => {
+    setConnectInitial('advanced')
+    setConnectOpen(true)
+  }, [])
   const closeConnect = useCallback(() => setConnectOpen(false), [])
 
   const value = useMemo<AccountApi>(
-    () => ({ me, loading, error, refresh, setYtmusic, connectOpen, openConnect, closeConnect }),
-    [me, loading, error, refresh, setYtmusic, connectOpen, openConnect, closeConnect],
+    () => ({
+      me,
+      loading,
+      error,
+      refresh,
+      setYtmusic,
+      connectOpen,
+      openConnect,
+      openConnectAdvanced,
+      connectInitial,
+      closeConnect,
+    }),
+    [me, loading, error, refresh, setYtmusic, connectOpen, openConnect, openConnectAdvanced, connectInitial, closeConnect],
   )
 
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>

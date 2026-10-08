@@ -83,7 +83,12 @@ export interface Health {
   status: 'ok'
   version: string
   auth_mode: AuthMode
+  /** true si el servidor tiene configurado el modo simple (conexión con Google). */
+  google_connect: boolean
 }
+
+/** Cómo está conectada la cuenta: permiso de Google (simple) o cURL del navegador (avanzado). */
+export type YTMode = 'google' | 'browser'
 
 export interface YTMusicAccount {
   name: string | null
@@ -95,6 +100,7 @@ export interface YTMusicStatus {
   connected: boolean
   account: YTMusicAccount | null
   error: string | null
+  mode: YTMode | null
 }
 
 export interface AppUser {

@@ -32,6 +32,8 @@ function Nav({ current, className = '' }: { current: Route['name']; className?: 
   )
 }
 
+const MODE_LABEL = { google: 'Google', browser: 'cURL' } as const
+
 function YtStatus() {
   const { me, loading, openConnect } = useAccount()
   if (!me) {
@@ -44,7 +46,7 @@ function YtStatus() {
       <button
         type="button"
         onClick={openConnect}
-        title="Gestionar la conexión con YouTube Music"
+        title={`Gestionar la conexión con YouTube Music${ytmusic.mode ? ` (${MODE_LABEL[ytmusic.mode]})` : ''}`}
         className="flex h-10 max-w-[10.5rem] items-center gap-2 rounded-full border border-line bg-surface py-1 pr-3 pl-1 transition-colors duration-150 hover:border-line-strong sm:max-w-[16rem]"
       >
         <span className="relative">
@@ -55,6 +57,12 @@ function YtStatus() {
           <span className="sr-only">YouTube Music conectado: </span>
           {ytmusic.account?.name ?? 'Conectado'}
         </span>
+        {ytmusic.mode && (
+          <span className="hidden shrink-0 text-xs font-normal text-faint sm:inline">
+            <span className="sr-only">, modo </span>
+            {MODE_LABEL[ytmusic.mode]}
+          </span>
+        )}
       </button>
     )
   }

@@ -1,6 +1,9 @@
-import { CheckCircle2, KeyRound, LogOut, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Info, KeyRound, Link2, LogOut, RefreshCw, ShieldCheck, Terminal } from 'lucide-react'
 import { useEffect, useState, type FormEvent } from 'react'
+import { SUPABASE_ENABLED } from '../config'
 import { useAccount } from '../context/AccountContext'
+import { useAuth } from '../context/AuthContext'
+import { useServerHealth } from '../context/HealthContext'
 import { useToast } from '../context/ToastContext'
 import { api, ApiError } from '../lib/api'
 import { Modal } from './Modal'
@@ -25,28 +28,59 @@ const STEPS = [
   <>Pega aquí abajo lo que copiaste y pulsa «Conectar».</>,
 ]
 
+type View = 'simple' | 'advanced'
+
 export function ConnectModal() {
-  const { me, connectOpen, closeConnect, setYtmusic } = useAccount()
+  const { me, connectOpen, connectInitial, closeConnect, setYtmusic } = useAccount()
+  const { connectYouTubeWithGoogle } = useAuth()
+  const health = useServerHealth()
   const { toast } = useToast()
   const status = me?.ytmusic
   const connected = Boolean(status?.connected)
+  const mode = status?.mode ?? null
+
+  // El modo simple necesita que el servidor lo tenga configurado y que haya login con Supabase.
+  const simpleAvailable = health.google_connect && SUPABASE_ENABLED
 
   const [raw, setRaw] = useState('')
   const [saving, setSaving] = useState(false)
   const [removing, setRemoving] = useState(false)
+  const [redirecting, setRedirecting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
-  const [replacing, setReplacing] = useState(false)
+  // Conectada y mirando la vista de otro modo (cambiar de modo / actualizar credenciales).
+  const [changing, setChanging] = useState(false)
+  const [pickedView, setPickedView] = useState<View>('simple')
 
   // Cada vez que se abre, el formulario empieza limpio.
   useEffect(() => {
-    if (connectOpen) {
-      setRaw('')
-      setFormError(null)
-      setReplacing(false)
-    }
+    if (!connectOpen) return
+    setRaw('')
+    setFormError(null)
+    setRedirecting(false)
+    setChanging(connectInitial === 'advanced' && connected)
+    setPickedView(connectInitial === 'advanced' ? 'advanced' : 'simple')
+    // Solo al abrir: el estado de conexión puede cambiar con el modal abierto.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectOpen])
 
-  const showForm = !connected || replacing
+  const showStatus = connected && !changing
+  const view: View = simpleAvailable ? pickedView : 'advanced'
+
+  function switchMode() {
+    setChanging(true)
+    setFormError(null)
+    setPickedView(mode === 'google' ? 'advanced' : 'simple')
+  }
+
+  async function onGoogle() {
+    setRedirecting(true)
+    try {
+      await connectYouTubeWithGoogle()
+    } finally {
+      // Si el navegador redirige, esto no llega a verse; si falla, se puede reintentar.
+      setRedirecting(false)
+    }
+  }
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault()
@@ -73,7 +107,7 @@ export function ConnectModal() {
     setRemoving(true)
     try {
       await api.deleteCredentials()
-      setYtmusic({ connected: false, account: null, error: null })
+      setYtmusic({ connected: false, account: null, error: null, mode: null })
       toast('info', 'Cuenta de YouTube Music desconectada.')
       closeConnect()
     } catch (err) {
@@ -83,53 +117,162 @@ export function ConnectModal() {
     }
   }
 
+  const googleExpired = !connected && mode === 'google' && Boolean(status?.error)
+
+  let title = 'Conectar YouTube Music'
+  let description = 'Necesitamos una sesión de tu navegador para crear playlists en tu cuenta.'
+  if (showStatus) {
+    title = 'Tu cuenta de YouTube Music'
+    description = 'La app usa esta cuenta para buscar canciones y crear tus playlists.'
+  } else if (view === 'simple') {
+    description = 'Son un par de clics: sin copiar ni pegar nada.'
+  }
+
   return (
-    <Modal
-      open={connectOpen}
-      onClose={closeConnect}
-      title={connected ? 'Tu cuenta de YouTube Music' : 'Conectar YouTube Music'}
-      description={
-        connected
-          ? 'La app usa esta cuenta para buscar canciones y crear tus playlists.'
-          : 'Necesitamos una sesión de tu navegador para crear playlists en tu cuenta.'
-      }
-    >
+    <Modal open={connectOpen} onClose={closeConnect} title={title} description={description}>
       <div className="space-y-5">
-        {status?.error && (
-          <Notice tone="warn" title="Hay que volver a conectar la cuenta">
-            {status.error}
+        {googleExpired && (
+          <Notice
+            tone="warn"
+            title="Google revocó o venció el permiso"
+            action={
+              view === 'simple' || !simpleAvailable ? undefined : (
+                <Button size="sm" variant="secondary" onClick={() => setPickedView('simple')}>
+                  Modo simple
+                </Button>
+              )
+            }
+          >
+            {status?.error}
             <span className="mt-1 block text-muted">
-              Es normal: Google vence la sesión de vez en cuando. Pega un cURL nuevo para reconectar.
+              Pasa de vez en cuando (por ejemplo, si quitaste el acceso desde tu cuenta de Google). Vuelve a
+              autorizarlo para seguir creando playlists.
             </span>
           </Notice>
         )}
 
-        {connected && status && (
-          <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3">
-            <Avatar src={status.account?.photo_url} name={status.account?.name} className="size-11" />
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold">{status.account?.name ?? 'Cuenta conectada'}</p>
-              {status.account?.handle && <p className="truncate text-sm text-muted">{status.account.handle}</p>}
+        {!googleExpired && !connected && status?.error && (
+          <Notice tone="warn" title="Hay que volver a conectar la cuenta">
+            {status.error}
+            <span className="mt-1 block text-muted">
+              Es normal: Google vence la sesión de vez en cuando.{' '}
+              {view === 'advanced' ? 'Pega un cURL nuevo para reconectar.' : 'Vuelve a conectar para seguir.'}
+            </span>
+          </Notice>
+        )}
+
+        {showStatus && status && (
+          <>
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3">
+              <Avatar src={status.account?.photo_url} name={status.account?.name} className="size-11" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold">{status.account?.name ?? 'Cuenta conectada'}</p>
+                {status.account?.handle && <p className="truncate text-sm text-muted">{status.account.handle}</p>}
+              </div>
+              <div className="flex basis-full flex-wrap items-center gap-1.5 pl-14 sm:basis-auto sm:pl-0">
+                {mode && (
+                  <Badge
+                    tone="neutral"
+                    icon={mode === 'google' ? <Link2 className="size-3.5" aria-hidden /> : <Terminal className="size-3.5" aria-hidden />}
+                  >
+                    {mode === 'google' ? 'Google' : 'Avanzado · cURL'}
+                  </Badge>
+                )}
+                <Badge tone="ok" icon={<CheckCircle2 className="size-3.5" aria-hidden />}>
+                  Conectada
+                </Badge>
+              </div>
             </div>
-            <Badge tone="ok" icon={<CheckCircle2 className="size-3.5" aria-hidden />}>
-              Conectada
-            </Badge>
+
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+              <Button variant="danger" onClick={onDisconnect} loading={removing} icon={<LogOut className="size-4" />}>
+                Desconectar
+              </Button>
+              {(mode === 'google' || simpleAvailable) && (
+                <Button variant="secondary" onClick={switchMode} icon={<RefreshCw className="size-4" />}>
+                  Cambiar de modo
+                </Button>
+              )}
+              {mode !== 'google' && (
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    setChanging(true)
+                    setPickedView('advanced')
+                  }}
+                  icon={<KeyRound className="size-4" />}
+                >
+                  Actualizar credenciales
+                </Button>
+              )}
+            </div>
+          </>
+        )}
+
+        {!showStatus && view === 'simple' && (
+          <div className="space-y-5">
+            <p className="text-sm text-muted">
+              Autoriza a la app a crear playlists en tu cuenta de YouTube. Tu YouTube Music Premium usa la misma cuenta.
+            </p>
+
+            <Button
+              variant="primary"
+              size="lg"
+              className="w-full"
+              onClick={onGoogle}
+              loading={redirecting}
+              icon={<Link2 className="size-4" />}
+            >
+              {googleExpired ? 'Volver a conectar con Google' : 'Conectar con Google'}
+            </Button>
+
+            <ul className="space-y-2 text-[13px] text-muted">
+              <li className="flex items-start gap-2.5">
+                <Info className="mt-0.5 size-4 shrink-0 text-faint" aria-hidden />
+                <span>
+                  Límite de unas 200 canciones por día: es la cuota gratuita de la API de YouTube.
+                </span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <Info className="mt-0.5 size-4 shrink-0 text-faint" aria-hidden />
+                <span>
+                  Google puede mostrar un aviso de «app no verificada». Es normal: elige{' '}
+                  <strong className="font-semibold text-fg">Continuar</strong>.
+                </span>
+              </li>
+            </ul>
+
+            <div className="flex flex-col gap-2 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <Button variant="ghost" size="sm" onClick={() => setPickedView('advanced')} icon={<Terminal className="size-4" />}>
+                Usar modo avanzado (cURL)
+              </Button>
+              {connected && (
+                <Button variant="ghost" size="sm" onClick={() => setChanging(false)}>
+                  Cancelar
+                </Button>
+              )}
+            </div>
           </div>
         )}
 
-        {connected && !replacing && (
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button variant="danger" onClick={onDisconnect} loading={removing} icon={<LogOut className="size-4" />}>
-              Desconectar
-            </Button>
-            <Button variant="secondary" onClick={() => setReplacing(true)} icon={<KeyRound className="size-4" />}>
-              Actualizar credenciales
-            </Button>
-          </div>
-        )}
-
-        {showForm && (
+        {!showStatus && view === 'advanced' && (
           <form onSubmit={onSubmit} className="space-y-5">
+            {simpleAvailable && (
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setPickedView('simple')}
+                  className="inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-accent-text transition-colors duration-150 hover:underline"
+                >
+                  <ArrowLeft className="size-4" aria-hidden />
+                  Volver al modo simple
+                </button>
+                <p className="text-[13px] text-muted">
+                  El modo avanzado conviene para listas grandes o si la búsqueda no encuentra bien tus canciones.
+                </p>
+              </div>
+            )}
+
             <ol className="space-y-3">
               {STEPS.map((step, i) => (
                 <li key={i} className="flex gap-3 text-sm text-muted">
@@ -170,7 +313,7 @@ export function ConnectModal() {
 
             <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
               {connected && (
-                <Button variant="ghost" onClick={() => setReplacing(false)}>
+                <Button variant="ghost" onClick={() => setChanging(false)}>
                   Cancelar
                 </Button>
               )}
@@ -184,8 +327,9 @@ export function ConnectModal() {
         <p className="flex items-start gap-2 rounded-xl bg-surface-2 px-3 py-2.5 text-[13px] text-muted">
           <ShieldCheck className="mt-0.5 size-4 shrink-0 text-ok" aria-hidden />
           <span>
-            Las credenciales se guardan en el servidor de la app, asociadas a tu cuenta, y solo se usan para buscar y
-            agregar canciones. No se devuelven al navegador y puedes desconectarlas cuando quieras.
+            {(showStatus ? mode === 'google' : view === 'simple')
+              ? 'Guardamos en el servidor un permiso de Google (nunca tu contraseña), asociado a tu cuenta, y solo se usa para buscar canciones y crear tus playlists. No se devuelve al navegador y puedes desconectarlo cuando quieras o quitarlo desde tu cuenta de Google.'
+              : 'Las credenciales se guardan en el servidor de la app, asociadas a tu cuenta, y solo se usan para buscar y agregar canciones. No se devuelven al navegador y puedes desconectarlas cuando quieras.'}
           </span>
         </p>
       </div>

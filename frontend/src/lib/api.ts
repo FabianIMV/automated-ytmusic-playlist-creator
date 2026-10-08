@@ -119,6 +119,8 @@ export const api = {
   health: (signal?: AbortSignal) => request<Health>('GET', '/api/health', { signal, auth: false }),
   me: (signal?: AbortSignal) => request<Me>('GET', '/api/me', { signal }),
   saveCredentials: (raw: string) => request<YTMusicStatus>('PUT', '/api/ytmusic/credentials', { body: { raw } }),
+  connectGoogle: (refreshToken: string) =>
+    request<YTMusicStatus>('PUT', '/api/ytmusic/google', { body: { refresh_token: refreshToken } }),
   deleteCredentials: () => request<void>('DELETE', '/api/ytmusic/credentials'),
   parseSetlist: (source: Source, signal?: AbortSignal) =>
     request<Setlist>('POST', '/api/setlists/parse', { body: source, signal }),

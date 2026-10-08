@@ -107,7 +107,7 @@ function ItemRow({ item, active }: { item: ItemResult; active: boolean }) {
 
 export function JobView({ id }: { id: string }) {
   const { job, error, offline } = useJob(id)
-  const { openConnect } = useAccount()
+  const { me, openConnect, openConnectAdvanced } = useAccount()
   const { toast } = useToast()
   const [busy, setBusy] = useState<'retry' | 'create' | null>(null)
   const [filter, setFilter] = useState<'all' | 'issues'>('all')
@@ -164,6 +164,7 @@ export function JobView({ id }: { id: string }) {
   const { summary } = job
   const pct = percent(summary.processed, summary.total)
   const finished = job.status === 'completed' || job.status === 'failed'
+  const quotaExceeded = /cuota|quota/i.test(job.error ?? '')
   const failedOrRetryable = retryQueries(job.items, job.status === 'failed')
   const foundQueries = job.items.filter((i) => i.status === 'found').map((i) => i.query)
   const issues = job.items.filter((i) => i.status === 'not_found' || i.status === 'error')
@@ -292,6 +293,18 @@ export function JobView({ id }: { id: string }) {
         {job.status === 'failed' && job.error && (
           <Notice tone="bad" title="El trabajo falló" className="mt-5">
             {job.error}
+          </Notice>
+        )}
+
+        {job.status === 'failed' && quotaExceeded && (
+          <Notice tone="info" title="Se agotó la cuota diaria de YouTube" className="mt-3">
+            Las canciones que no alcanzaron a procesarse quedaron pendientes. Puedes reintentar mañana
+            {me?.ytmusic.mode !== 'browser' ? ' o usar el modo avanzado.' : '.'}
+            {me?.ytmusic.mode !== 'browser' && (
+              <Button size="sm" variant="secondary" className="mt-3" onClick={openConnectAdvanced}>
+                Usar modo avanzado
+              </Button>
+            )}
           </Notice>
         )}
 

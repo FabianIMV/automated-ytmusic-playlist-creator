@@ -2,6 +2,7 @@ import { ListMusic, Sparkles } from 'lucide-react'
 import { useState } from 'react'
 import { APP_NAME } from '../config'
 import { useAuth } from '../context/AuthContext'
+import { useServerHealth } from '../context/HealthContext'
 import { Button, Logo } from './ui'
 
 function GoogleMark() {
@@ -17,12 +18,14 @@ function GoogleMark() {
 
 export function LoginScreen() {
   const { signInWithGoogle } = useAuth()
+  const health = useServerHealth()
   const [busy, setBusy] = useState(false)
 
   async function onClick() {
     setBusy(true)
     try {
-      await signInWithGoogle()
+      // Con el modo simple disponible, un solo clic inicia sesión y autoriza YouTube.
+      await signInWithGoogle({ youtube: health.google_connect })
     } finally {
       // Si el navegador redirige, esto no llega a verse; si falla, se puede reintentar.
       setBusy(false)
@@ -43,7 +46,9 @@ export function LoginScreen() {
         <div className="card p-6">
           <h2 className="text-lg font-semibold">Inicia sesión para continuar</h2>
           <p className="mt-1 text-sm text-muted">
-            Usamos tu cuenta de Google solo para identificarte y guardar tu historial.
+            {health.google_connect
+              ? 'Usamos tu cuenta de Google para identificarte y, con tu permiso, crear playlists en tu YouTube Music.'
+              : 'Usamos tu cuenta de Google solo para identificarte y guardar tu historial.'}
           </p>
           <Button
             variant="secondary"

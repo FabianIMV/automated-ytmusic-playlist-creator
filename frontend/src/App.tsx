@@ -1,12 +1,14 @@
 import { KeyRound, ServerCrash } from 'lucide-react'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { ConnectModal } from './components/ConnectModal'
+import { GoogleReturn } from './components/GoogleReturn'
 import { Header } from './components/Header'
 import { LoginScreen } from './components/LoginScreen'
 import { Button, Logo, Notice, Spinner } from './components/ui'
 import { SUPABASE_ENABLED } from './config'
 import { AccountProvider, useAccount } from './context/AccountContext'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { HealthContext } from './context/HealthContext'
 import { ToastProvider } from './context/ToastContext'
 import { api, ApiError } from './lib/api'
 import type { Health } from './lib/types'
@@ -152,13 +154,22 @@ function Root() {
 
   if (SUPABASE_ENABLED) {
     if (auth.status === 'loading') return <Splash />
-    if (auth.status === 'signed-out') return <LoginScreen />
+    if (auth.status === 'signed-out') {
+      return (
+        <HealthContext.Provider value={health}>
+          <LoginScreen />
+        </HealthContext.Provider>
+      )
+    }
   }
 
   return (
-    <AccountProvider>
-      <Main />
-    </AccountProvider>
+    <HealthContext.Provider value={health}>
+      <AccountProvider>
+        <GoogleReturn />
+        <Main />
+      </AccountProvider>
+    </HealthContext.Provider>
   )
 }
 
