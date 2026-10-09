@@ -15,7 +15,7 @@ Automatiza la creación de playlists en YouTube Music a partir de setlists de co
 
 ## 🖼️ Capturas
 
-Las capturas del recorrido completo están en el [README principal](readme.MD#-así-se-usa) y en [`docs/screenshots/`](docs/screenshots/).
+*Próximamente:* las capturas de la interfaz irán en `docs/screenshot.png`.
 
 ## 🚀 Inicio rápido (local)
 
