@@ -193,6 +193,7 @@ Abre la URL de Render, inicia sesión con Google y conecta tu cuenta de YouTube 
 - El servicio **se duerme** tras 15 minutos sin uso. La primera carga después de un rato tarda en responder.
 - Los jobs viven en memoria. Si el servicio se reinicia a mitad de un job, se pierde el progreso, aunque lo ya agregado queda en la playlist. Mientras corre un job, la interfaz consulta su estado, lo que ayuda a mantener el servicio despierto.
 - El disco es efímero. Por eso las credenciales se guardan en Supabase (`CREDENTIAL_STORE=supabase`) y no en disco.
+- Supabase pausa el proyecto tras 7 días sin actividad. Para evitarlo, el workflow `supabase-keepalive.yml` hace una consulta mínima cada 3 días: corre la migración `20261015000000_keepalive.sql` y define en GitHub la variable `SUPABASE_URL` y el secret `SUPABASE_PUBLISHABLE_KEY` (opcional: variable `APP_URL` para despertar también Render).
 - Nunca pongas `SUPABASE_SERVICE_KEY` ni `CREDENTIALS_ENCRYPTION_KEY` en el frontend ni en el repositorio.
 
 ## 🌐 Alternativa: frontend en GitHub Pages

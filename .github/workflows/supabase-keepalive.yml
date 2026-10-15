@@ -1,0 +1,44 @@
+name: Supabase keepalive
+
+# El plan gratuito de Supabase pausa el proyecto tras 7 días sin actividad.
+# Cada 3 días se ejecuta una consulta mínima (función keepalive) para evitarlo.
+# Requiere la migración supabase/migrations/20261015000000_keepalive.sql y, en
+# Settings → Secrets and variables → Actions:
+#   - variable SUPABASE_URL              (https://<proyecto>.supabase.co)
+#   - secret   SUPABASE_PUBLISHABLE_KEY  (sb_publishable_..., la misma del frontend)
+# Opcional: variable APP_URL para despertar también el servicio de Render.
+
+on:
+  schedule:
+    - cron: "17 12 */3 * *" # cada 3 días, 12:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Consultar la base de Supabase
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_KEY" ]; then
+            echo "::error::Faltan la variable SUPABASE_URL o el secret SUPABASE_PUBLISHABLE_KEY"
+            exit 1
+          fi
+          curl -fsS --retry 3 --retry-delay 10 -X POST \
+            "${SUPABASE_URL%/}/rest/v1/rpc/keepalive" \
+            -H "apikey: $SUPABASE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{}'
+          echo
+
+      - name: Despertar la app en Render (opcional)
+        if: ${{ vars.APP_URL != '' }}
+        env:
+          APP_URL: ${{ vars.APP_URL }}
+        run: curl -fsS --retry 3 --retry-delay 20 --max-time 90 "${APP_URL%/}/api/health" || echo "::warning::La app no respondió"
